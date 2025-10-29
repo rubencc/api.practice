@@ -18,10 +18,7 @@ app.UseHttpsRedirection();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseRouting();
-app.UseEndpoints(x =>
-{
-    x.MapControllers();
-});
+app.MapControllers();
 
 
 app.Run();

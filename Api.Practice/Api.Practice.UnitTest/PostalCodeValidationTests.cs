@@ -2,7 +2,7 @@
 
 using Api.Practice.Resources;
 using Api.Practice.Validations;
-using FluentAssertions;
+using AwesomeAssertions;
 
 public class PostalCodeValidationTests
 {
