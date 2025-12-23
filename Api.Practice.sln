@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{60439F31-B69D-43D3-9556-4C223B625CD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AE329FA3-5CA3-403C-91AD-745E8B5D5D94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docker", ".docker", "{FF785FF6-2D9D-4530-8766-8EE887B1FDC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".misc", ".misc", "{3973FFC0-5A20-49FB-BE0E-9E89F466367F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Weather.Host", "src\Api.Weather.Host\Api.Weather.Host.csproj", "{7280E616-7487-4954-811B-3C0491D13AE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Weather.Host.UnitTest", "tests\Api.Weather.Host.UnitTest\Api.Weather.Host.UnitTest.csproj", "{B27F6680-4527-48B6-B011-2EE7456D79BE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7280E616-7487-4954-811B-3C0491D13AE0} = {60439F31-B69D-43D3-9556-4C223B625CD0}
+		{B27F6680-4527-48B6-B011-2EE7456D79BE} = {AE329FA3-5CA3-403C-91AD-745E8B5D5D94}
+	EndGlobalSection
+EndGlobal

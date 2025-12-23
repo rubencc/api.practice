@@ -1,8 +1,8 @@
-﻿namespace Api.Practice.Validations;
-
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Api.Practice.Resources;
+using Api.Weather.Host.Resources;
+
+namespace Api.Weather.Host.Validations;
 
 public class PostalCodeValidation : IValidation<ForecastRequest>
 {

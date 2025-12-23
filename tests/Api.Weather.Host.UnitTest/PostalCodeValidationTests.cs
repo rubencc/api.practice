@@ -1,8 +1,8 @@
-﻿namespace Api.Practice.UnitTest;
-
-using Api.Practice.Resources;
-using Api.Practice.Validations;
+﻿using Api.Weather.Host.Resources;
+using Api.Weather.Host.Validations;
 using AwesomeAssertions;
+
+namespace Api.Weather.Host.UnitTest;
 
 public class PostalCodeValidationTests
 {

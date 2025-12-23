@@ -1,8 +1,8 @@
-﻿namespace Api.Practice.Services;
-
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using Api.Practice.Entities;
+using Api.Weather.Host.Entities;
+
+namespace Api.Weather.Host.Services;
 
 public class ForecastService
 {

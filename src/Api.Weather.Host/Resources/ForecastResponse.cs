@@ -1,6 +1,6 @@
-﻿namespace Api.Practice.Resources;
+﻿using System;
 
-using System;
+namespace Api.Weather.Host.Resources;
 
 public class ForecastResponse
 {

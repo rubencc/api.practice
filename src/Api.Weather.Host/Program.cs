@@ -1,4 +1,4 @@
-using Api.Practice.Extensions;
+using Api.Weather.Host.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 

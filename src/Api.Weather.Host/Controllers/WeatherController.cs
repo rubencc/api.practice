@@ -1,24 +1,33 @@
-﻿namespace Api.Practice.Controllers;
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Api.Practice.Resources;
-using Api.Practice.Services;
-using Api.Practice.Validations;
+using Api.Weather.Host.Resources;
+using Api.Weather.Host.Services;
+using Api.Weather.Host.Validations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
+namespace Api.Weather.Host.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class WeatherController : ControllerBase
 {
-    private readonly IValidation<ForecastRequest> postalCodeValidation;
+    private readonly List<IValidation<ForecastRequest>> validations;
     private readonly ForecastService forecastService;
 
-    public WeatherController(IValidation<ForecastRequest> postalCodeValidation, ForecastService forecastService)
+    public WeatherController(IEnumerable<IValidation<ForecastRequest>> validations, ForecastService forecastService)
     {
-        this.postalCodeValidation = postalCodeValidation ?? throw new ArgumentNullException(nameof(postalCodeValidation));
+        if (validations == null)
+            throw new ArgumentNullException(nameof(validations));
+        
+        this.validations = validations.ToList();
+        
+        if (this.validations.Count == 0)
+            throw new InvalidOperationException("At least one validation must be registered in the IoC container.");
+        
         this.forecastService = forecastService ?? throw new ArgumentNullException(nameof(forecastService));
     }
 
@@ -28,7 +37,7 @@ public class WeatherController : ControllerBase
     public async Task<IActionResult> GetForecast([FromQuery] ForecastRequest request, CancellationToken cancellationToken)
     {
 
-        var validationResult = await this.postalCodeValidation.IsValid(request);
+        var validationResult = this.validations.TrueForAll(x => x.IsValid(request).Result);
         
         if(!validationResult)
             return BadRequest();

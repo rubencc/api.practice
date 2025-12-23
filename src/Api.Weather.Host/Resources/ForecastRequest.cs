@@ -1,4 +1,4 @@
-﻿namespace Api.Practice.Resources;
+﻿namespace Api.Weather.Host.Resources;
 
 public class ForecastRequest
 {

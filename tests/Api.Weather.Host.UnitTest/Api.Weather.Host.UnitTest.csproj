@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\src\Api.Weather.Host\Api.Weather.Host.csproj" />
       <ProjectReference Include="..\Api.Practice\Api.Practice.csproj" />
     </ItemGroup>
 

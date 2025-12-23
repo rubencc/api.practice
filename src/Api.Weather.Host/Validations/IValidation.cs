@@ -1,6 +1,6 @@
-﻿namespace Api.Practice.Validations;
+﻿using System.Threading.Tasks;
 
-using System.Threading.Tasks;
+namespace Api.Weather.Host.Validations;
 
 public interface IValidation<T>  where T : class
 {

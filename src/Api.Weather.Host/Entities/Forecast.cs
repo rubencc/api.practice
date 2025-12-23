@@ -1,4 +1,4 @@
-﻿namespace Api.Practice.Entities;
+﻿namespace Api.Weather.Host.Entities;
 
 public class Forecast
 {
