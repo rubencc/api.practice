@@ -1,7 +1,9 @@
-﻿namespace Api.Weather.Host.Resources;
+﻿using System;
+
+namespace Api.Weather.Host.Resources;
 
 public class ForecastRequest
 {
-    public string PostalCode { get; set; }
-    public string Time { get; set; }
+    public string Address { get; set; }
+    public DateOnly Time { get; set; }
 }
