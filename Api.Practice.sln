@@ -18,9 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Weather.Host.UnitTest",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".documentation", ".documentation", "{22669C97-473E-4FE1-85D8-DC399F2808E6}"
 	ProjectSection(SolutionItems) = preProject
-		.documentation\README.md = .documentation\README.md
 		.documentation\OPENCAGE_API_SETUP.md = .documentation\OPENCAGE_API_SETUP.md
 		.documentation\OPEN_METEO_SERVICE.md = .documentation\OPEN_METEO_SERVICE.md
+		.documentation\README_ACTUALIZADO.md = .documentation\README_ACTUALIZADO.md
+		.documentation\INDEX.md = .documentation\INDEX.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Services", "1 - Services", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"

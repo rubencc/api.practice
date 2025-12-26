@@ -1,1619 +1,667 @@
-# Estructura de Proyecto DDD (Domain-Driven Design)
+# Weather API - Documentación Actualizada del Proyecto
 
-## Organización por Capas
+**Fecha de actualización**: 2025-12-26
 
-La arquitectura DDD organiza el código en capas bien definidas, cada una con responsabilidades específicas y dependencias controladas.
+## 📋 Descripción General
+
+Weather API es una aplicación .NET 8 que proporciona pronósticos meteorológicos basados en ubicación geográfica. El proyecto utiliza **Clean Architecture** con capas bien definidas y sigue los principios de **Domain-Driven Design (DDD)**.
+
+### Características Principales
+- 🌤️ Pronósticos meteorológicos en tiempo real
+- 📍 Geolocalización mediante direcciones o coordenadas
+- 💾 Almacenamiento persistente en MongoDB
+- 🎯 API REST con Swagger/OpenAPI
+- 🏗️ Clean Architecture y DDD
+- 🔧 Patrón Options para configuración
+
+---
+
+## 🏗️ Arquitectura del Proyecto Actual
 
 ```
-Solution/
+Api.Practice/
 ├── src/
-│   ├── Domain/                          # Núcleo del negocio
-│   │   ├── Entities/                    # Entidades del dominio
-│   │   ├── ValueObjects/                # Objetos de valor
-│   │   ├── Aggregates/                  # Agregados (raíces)
-│   │   ├── DomainServices/              # Servicios de dominio
-│   │   ├── DomainEvents/                # Eventos de dominio
-│   │   ├── Repositories/                # Interfaces de repositorios
-│   │   └── Exceptions/                  # Excepciones de negocio
+│   ├── Weather.Domain/                  # Capa de Dominio
+│   │   ├── Aggregates/
+│   │   │   └── Forecast.cs              # Agregado raíz de pronóstico
+│   │   ├── Repositories/
+│   │   │   └── IForecastRepository.cs   # Interfaz de repositorio
+│   │   ├── Exceptions/                  # (futuro)
+│   │   ├── Entities/                    # (futuro)
+│   │   ├── DomainServices/              # (futuro)
+│   │   └── Validators/                  # (futuro)
 │   │
-│   ├── Application/                     # Casos de uso
-│   │   ├── Commands/                    # Comandos (escritura)
-│   │   ├── Queries/                     # Consultas (lectura)
-│   │   ├── DTOs/                        # Data Transfer Objects
-│   │   ├── Validators/                  # Validaciones de aplicación
-│   │   └── Interfaces/                  # Contratos de servicios externos
+│   ├── Weather.Application/             # Capa de Aplicación
+│   │   ├── Commands/
+│   │   │   └── ForecastCommand.cs       # Comando de pronóstico
+│   │   ├── DTOs/
+│   │   │   └── ForecastDto.cs           # DTO de respuesta
+│   │   ├── Services/
+│   │   │   ├── ForecastService.cs       # Servicio principal
+│   │   │   ├── GeolocationService.cs    # Servicio OpenCage
+│   │   │   └── WeatherQueryService.cs   # Servicio Open-Meteo
+│   │   ├── Validators/
+│   │   │   ├── AddressValidation.cs
+│   │   │   └── DateTimeOffsetValidation.cs
+│   │   ├── Interfaces/
+│   │   │   ├── IGeolocationService.cs
+│   │   │   ├── IValidation.cs
+│   │   │   └── IWeatherQueryService.cs
+│   │   ├── Configuration/
+│   │   │   ├── HttpClientExtensions.cs
+│   │   │   └── ServiceCollectionExtensions.cs
+│   │   ├── Extensions/
+│   │   │   └── DateTimeExtensions.cs
+│   │   └── Queries/                     # (futuro)
 │   │
-│   ├── Infrastructure/                  # Implementaciones técnicas
-│   │   ├── Persistence/                 # Base de datos MongoDB
-│   │   │   ├── Repositories/            # Implementación de repositorios
-│   │   │   ├── Configurations/          # Mapeo MongoDB
-│   │   │   └── Context/                 # Contexto MongoDB
-│   │   ├── ExternalServices/            # APIs externas (ej: AEMET, OpenWeatherMap)
-│   │   │   ├── Weather/                 # Servicios meteorológicos
-│   │   │   └── Http/                    # Clients HTTP
-│   │   ├── Messaging/                   # Bus de eventos y mensajería
-│   │   │   ├── Consumers/               # Consumidores MassTransit
-│   │   │   ├── Publishers/              # Publicadores de eventos
-│   │   │   └── Configuration/           # Configuración RabbitMQ
-│   │   └── Caching/                     # Caché
+│   ├── Weather.Infrastructure/          # Capa de Infraestructura
+│   │   ├── Persistence/
+│   │   │   ├── Repositories/
+│   │   │   │   └── ForecastRepository.cs # Implementación MongoDB
+│   │   │   ├── Models/
+│   │   │   │   └── ForecastEntity.cs     # Modelo BD (futuro)
+│   │   │   └── MongoDbContext.cs        # Contexto MongoDB
+│   │   ├── Configuration/
+│   │   │   ├── MongoDbSettings.cs       # Settings (Options Pattern)
+│   │   │   └── ServiceCollectionExtensions.cs
+│   │   └── Messaging/                   # (futuro - RabbitMQ)
 │   │
-│   └── Api/Presentation/                # Capa de presentación
-│       ├── Controllers/                 # Controladores HTTP
-│       ├── Filters/                     # Filtros y middleware
-│       ├── Resources/                   # Modelos de request/response
-│       └── Mappings/                    # AutoMapper profiles
+│   └── Api.Weather.Host/                # Capa de Presentación
+│       ├── Controllers/
+│       │   └── WeatherController.cs     # API Controller
+│       ├── Resources/
+│       │   ├── ForecastRequest.cs       # Request DTO
+│       │   └── ForecastResponse.cs      # Response DTO
+│       ├── Extensions/
+│       ├── Properties/
+│       │   └── launchSettings.json
+│       ├── appsettings.json
+│       ├── appsettings.Development.json
+│       └── Program.cs
 │
-└── tests/
-    ├── Domain.Tests/
-    ├── Application.Tests/
-    └── Api.Tests/
+├── tests/
+│   └── Api.Weather.Host.UnitTest/       # Tests unitarios
+│
+├── .docker/                             # Docker configuration
+│   ├── docker-compose.yaml              # MongoDB con replica set
+│   └── .env                             # Variables de entorno
+│
+├── .documentation/                      # Documentación
+│   ├── README.md                        # Documentación principal (este archivo)
+│   ├── OPENCAGE_API_SETUP.md           # Setup OpenCage API
+│   └── OPEN_METEO_SERVICE.md           # Documentación Open-Meteo
+│
+├── mongodb.sh                           # Script gestión MongoDB
+├── MONGODB_CONFIG.md                    # Documentación MongoDB (raíz)
+├── OPTIONS_PATTERN.md                   # Documentación Options Pattern
+└── README.md                            # README principal (raíz)
 ```
 
 ---
 
-## Descripción de Capas y Proyectos
+## 📦 Descripción de Capas
 
-### 🎯 **Domain (Dominio)**
+### 🎯 Weather.Domain (Dominio)
 
-**Propósito**: Contiene la lógica de negocio pura, sin dependencias externas.
+**Propósito**: Núcleo del negocio sin dependencias externas.
 
-**Carpetas**:
+**Contenido actual**:
+- **Aggregates/Forecast.cs**: Agregado raíz que representa un pronóstico meteorológico
+- **Repositories/IForecastRepository.cs**: Interfaz del repositorio
 
-- **Entities/**: Entidades con identidad única (ej: `Forecast`, `User`)
-  - Contienen lógica de negocio
-  - Tienen un identificador único
-  - Representan conceptos del negocio
-
-- **ValueObjects/**: Objetos inmutables sin identidad (ej: `PostalCode`, `Temperature`)
-  - Se comparan por valor, no por identidad
-  - Son inmutables
-  - Encapsulan validaciones
-
-- **Aggregates/**: Agrupaciones de entidades que se tratan como una unidad
-  - Define límites transaccionales
-  - La raíz del agregado controla el acceso
-
-- **DomainServices/**: Servicios de dominio para lógica que no pertenece a una entidad
-  - Operaciones que involucran múltiples entidades
-  - Lógica de negocio compleja
-
-- **DomainEvents/**: Eventos que representan algo que ocurrió en el dominio
-  - Comunicación entre agregados
-  - Desacoplamiento
-
-- **Repositories/**: Interfaces (contratos) para acceso a datos
-  - Define qué operaciones se pueden hacer
-  - La implementación está en Infrastructure
-
-- **Exceptions/**: Excepciones específicas del dominio
-  - Errores de negocio
-  - Validaciones de dominio
-
-**Dependencias**: Ninguna (solo .NET base)
-
----
-
-### 📋 **Application (Aplicación)**
-
-**Propósito**: Orquesta los casos de uso del sistema. Coordina el flujo de datos entre Domain e Infrastructure.
-
-**Carpetas**:
-
-- **Commands/**: Operaciones de escritura (CQRS)
-  - Modifican el estado del sistema
-  - Implementados como servicios directos (sin MediatR)
-  - Ejemplo: `CreateForecastCommand`, `RequestForecastCommand`
-
-- **Queries/**: Operaciones de lectura (CQRS)
-  - Solo consultan datos
-  - Implementados como servicios directos (sin MediatR)
-  - Ejemplo: `GetForecastQuery`, `GetHistoricalForecastQuery`
-
-- **Services/**: Servicios de aplicación
-  - Coordinan la lógica de negocio
-  - Ejemplo: `ForecastApplicationService`
-
-- **DTOs/**: Data Transfer Objects
-  - Objetos para transferir datos entre capas
-  - No contienen lógica de negocio
-
-- **Validators/**: Validadores de entrada (FluentValidation)
-  - Validaciones de aplicación
-  - Complementan las validaciones de dominio
-
-- **Interfaces/**: Contratos de servicios externos
-  - Define cómo la aplicación usa servicios externos
-  - Implementaciones en Infrastructure
-
-**Dependencias**: Domain
-
-**Nota**: Este proyecto usa CQRS sin MediatR. Los Commands y Queries son servicios que se inyectan directamente vía DI.
-
----
-
-### 🔧 **Infrastructure (Infraestructura)**
-
-**Propósito**: Implementa los detalles técnicos y dependencias externas.
-
-**Carpetas**:
-
-- **Persistence/**: Acceso a base de datos MongoDB
-  - **Repositories/**: Implementaciones de `IRepository`
-  - **Configurations/**: Configuraciones de colecciones y índices MongoDB
-  - **Context/**: Contexto de MongoDB con IMongoDatabase
-
-- **ExternalServices/**: Integraciones con APIs externas
-  - **Weather/**: Implementaciones de servicios meteorológicos
-    - `AemetWeatherService.cs`: Cliente AEMET
-    - `OpenWeatherMapService.cs`: Cliente OpenWeatherMap
-  - **Http/**: HttpClient factories y configuraciones
-    - Políticas de retry (Polly)
-    - Circuit breakers
-
-- **Messaging/**: Sistema de mensajería con RabbitMQ y MassTransit
-  - **Consumers/**: Consumidores de mensajes
-    - `ForecastRequestedConsumer.cs`: Procesa solicitudes de pronóstico
-    - `WeatherDataUpdatedConsumer.cs`: Procesa actualizaciones
-  - **Publishers/**: Publicadores de eventos
-    - `EventPublisher.cs`: Publica eventos de dominio
-  - **Configuration/**: Configuración de RabbitMQ y MassTransit
-    - `RabbitMqConfiguration.cs`: Settings de RabbitMQ
-    - `MassTransitConfiguration.cs`: Registro de MassTransit
-
-- **Caching/**: Implementación de caché
-  - Redis, Memory Cache
-  - Estrategias de caché
-
-**Dependencias**: Domain, Application
-
-**Tecnologías**:
-- **MongoDB.Driver**: Base de datos NoSQL
-- **MassTransit**: Abstracción de mensajería
-- **RabbitMQ.Client**: Message broker
-- **Polly**: Resiliencia y reintentos
-- **Redis** (opcional): Cache distribuido
-
----
-
-### 🌐 **Api/Presentation (Presentación)**
-
-**Propósito**: Expone la API HTTP y maneja las peticiones web.
-
-**Carpetas**:
-
-- **Controllers/**: Endpoints HTTP
-  - Reciben peticiones HTTP
-  - Delegan a Application layer
-  - Retornan respuestas HTTP
-
-- **Filters/**: Filtros y middleware
-  - Validación global
-  - Manejo de errores
-  - Logging
-
-- **Resources/**: Modelos de request/response
-  - Contratos de la API
-  - Validaciones de entrada
-
-- **Mappings/**: Perfiles de AutoMapper
-  - Mapeo entre DTOs y Resources
-  - Transformación de datos
-
-**Dependencias**: Application, Infrastructure
-
----
-
-## Flujo de Dependencias
-
-```
-Api/Presentation → Application → Domain
-                        ↓
-                 Infrastructure → Domain
+**Características del Agregado Forecast**:
+```csharp
+public class Forecast
+{
+    public string Location { get; init; }      // Ubicación
+    public DateTimeOffset Time { get; init; }  // Fecha/hora
+    public string Temperature { get; init; }   // Temperatura
+    public string Description { get; init; }   // Descripción clima
+    
+    // Factory method
+    public static Forecast Create(string address, DateTimeOffset time, 
+                                   string temperature, string description);
+}
 ```
 
-**Regla de oro**: Las dependencias siempre apuntan hacia el Domain (centro)
+**Dependencias**: Ninguna (solo .NET 8)
+
+---
+
+### 📋 Weather.Application (Aplicación)
+
+**Propósito**: Orquesta los casos de uso y coordina la lógica de aplicación.
+
+**Servicios principales**:
+
+1. **ForecastService**: Servicio principal que coordina la obtención y almacenamiento de pronósticos
+2. **GeolocationService**: Integración con OpenCage API para convertir direcciones a coordenadas
+3. **WeatherQueryService**: Integración con Open-Meteo API para obtener datos meteorológicos
+
+**Validadores**:
+- **AddressValidation**: Valida que la dirección no esté vacía
+- **DateTimeOffsetValidation**: Valida rangos de fechas
+
+**Configuración**:
+- Registro de servicios HTTP con políticas de retry
+- Inyección de dependencias
+
+**Dependencias**:
+- Weather.Domain (referencia de proyecto)
+- Microsoft.Extensions.Http (8.0.0)
+- Microsoft.Extensions.DependencyInjection.Abstractions (10.0.1)
+
+---
+
+### 🔧 Weather.Infrastructure (Infraestructura)
+
+**Propósito**: Implementaciones técnicas de persistencia y servicios externos.
+
+**Componentes principales**:
+
+1. **MongoDbContext**: Contexto para interactuar con MongoDB
+2. **ForecastRepository**: Implementación del repositorio usando MongoDB Driver
+3. **MongoDbSettings**: Configuración con **Options Pattern**
+
+**Patrón Options Implementado**:
+```csharp
+// Configuración en ServiceCollectionExtensions
+services.Configure<MongoDbSettings>(
+    configuration.GetSection("MongoDbSettings"));
+
+services.AddSingleton<IMongoClient>(sp =>
+{
+    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;
+    return new MongoClient(settings.ConnectionString);
+});
+
+// Uso en ForecastRepository
+public ForecastRepository(
+    IMongoClient client, 
+    IOptions<MongoDbSettings> settings)
+{
+    var mongoSettings = settings.Value;
+    // ...
+}
+```
+
+**Dependencias**:
+- Weather.Domain (referencia de proyecto)
+- Weather.Application (referencia de proyecto)
+- MongoDB.Driver (3.5.2)
+- Microsoft.Extensions.Configuration.Abstractions (10.0.1)
+- Microsoft.Extensions.Configuration.Binder (10.0.1)
+- Microsoft.Extensions.Options.ConfigurationExtensions (10.0.0)
+
+---
+
+### 🌐 Api.Weather.Host (Presentación)
+
+**Propósito**: API REST HTTP que expone los endpoints.
+
+**Controller principal**:
+- **WeatherController**: Endpoint GET para obtener pronósticos
+
+**Endpoint**:
+```
+GET /api/Weather
+Content-Type: application/json
+
+Request Body:
+{
+  "location": "Madrid, España",
+  "time": "2025-12-26T10:00:00Z"
+}
+
+Response:
+{
+  "location": "Madrid, España",
+  "time": "1735210800",
+  "temperature": "15.2",
+  "weather": "Parcialmente nublado"
+}
+```
+
+**Características**:
+- Swagger/OpenAPI para documentación interactiva
+- Validaciones con validadores personalizados
+- Manejo de errores
+
+**Dependencias**:
+- Weather.Application (referencia de proyecto)
+- Weather.Infrastructure (referencia de proyecto)
+- Swashbuckle.AspNetCore (6.5.0)
+
+---
+
+## 🔄 Flujo de Dependencias
+
+```
+Api.Weather.Host → Weather.Application → Weather.Domain
+                          ↓
+                  Weather.Infrastructure → Weather.Domain
+```
+
+**Regla fundamental**: Las dependencias siempre apuntan hacia el Domain
 
 - ✅ Application puede usar Domain
-- ✅ Infrastructure puede usar Domain
-- ✅ Api puede usar Application
-- ❌ Domain NO puede depender de ninguna otra capa
+- ✅ Infrastructure puede usar Domain y Application
+- ✅ Host puede usar Application e Infrastructure
+- ❌ Domain NO puede depender de otras capas
+- ❌ Application NO puede depender de Infrastructure
 
 ---
 
-## Aplicación al Proyecto Weather
+## 🔧 Tecnologías y Servicios
 
-### Estructura Recomendada
+### Base de Datos
+- **MongoDB 8.0.12**: Base de datos NoSQL
+- **MongoDB.Driver 3.5.2**: Driver oficial de .NET
+- **Patrón Options**: Configuración fuertemente tipada
 
-```
-Api.Weather/
-├── Api.Weather.Domain/
-│   ├── Entities/
-│   │   ├── Forecast.cs                  # Entidad de pronóstico (agregado raíz)
-│   │   └── WeatherAlert.cs              # Alertas meteorológicas
-│   ├── ValueObjects/
-│   │   ├── PostalCode.cs                # Código postal validado
-│   │   ├── Temperature.cs               # Temperatura con unidad
-│   │   ├── WeatherDate.cs               # Fecha del pronóstico
-│   │   └── Coordinates.cs               # Latitud y longitud
-│   ├── DomainEvents/
-│   │   ├── ForecastRequestedEvent.cs    # Evento: pronóstico solicitado
-│   │   └── ForecastCreatedEvent.cs      # Evento: pronóstico creado
-│   ├── Repositories/
-│   │   ├── IForecastRepository.cs       # Contrato de repositorio
-│   │   └── IWeatherCacheRepository.cs   # Contrato de caché
-│   └── Exceptions/
-│       ├── InvalidPostalCodeException.cs
-│       ├── ForecastNotFoundException.cs
-│       └── WeatherServiceUnavailableException.cs
-│
-├── Api.Weather.Application/
-│   ├── Services/
-│   │   ├── ForecastApplicationService.cs    # Servicio principal de pronósticos
-│   │   └── WeatherQueryService.cs           # Servicio de consultas
-│   ├── Commands/
-│   │   └── RequestForecastCommand.cs        # DTO/Modelo de comando
-│   ├── Queries/
-│   │   ├── GetForecastQuery.cs              # DTO/Modelo de query
-│   │   └── GetHistoricalForecastQuery.cs    # DTO/Modelo de query histórico
-│   ├── DTOs/
-│   │   ├── ForecastDto.cs                   # DTO de respuesta
-│   │   ├── ForecastRequestDto.cs            # DTO de petición
-│   │   └── WeatherDataDto.cs                # DTO de datos meteorológicos
-│   ├── Validators/
-│   │   ├── PostalCodeValidator.cs           # Validador de código postal
-│   │   └── DateValidator.cs                 # Validador de fecha
-│   ├── Interfaces/
-│   │   ├── IWeatherService.cs               # Contrato de servicio externo
-│   │   ├── IEventPublisher.cs               # Contrato de publicador de eventos
-│   │   ├── IForecastApplicationService.cs   # Contrato de servicio de aplicación
-│   │   └── IWeatherQueryService.cs          # Contrato de servicio de consultas
-│   └── Mappers/
-│       └── ForecastMapper.cs            # Mapeo entre entidades y DTOs
-│
-├── Api.Weather.Infrastructure/
-│   ├── Persistence/
-│   │   ├── Context/
-│   │   │   ├── MongoDbContext.cs        # Contexto MongoDB
-│   │   │   └── MongoDbSettings.cs       # Configuración MongoDB
-│   │   ├── Repositories/
-│   │   │   ├── ForecastRepository.cs    # Implementación repositorio
-│   │   │   └── WeatherCacheRepository.cs
-│   │   └── Configurations/
-│   │       ├── ForecastConfiguration.cs # Configuración colección Forecast
-│   │       └── IndexConfiguration.cs    # Índices MongoDB
-│   │
-│   ├── ExternalServices/
-│   │   ├── Weather/
-│   │   │   ├── AemetWeatherService.cs   # Implementación AEMET
-│   │   │   ├── OpenWeatherMapService.cs # Implementación OpenWeatherMap
-│   │   │   └── WeatherServiceFactory.cs # Factory para servicios
-│   │   └── Http/
-│   │       ├── HttpClientConfiguration.cs
-│   │       └── PollyPolicies.cs         # Políticas de resiliencia
-│   │
-│   ├── Messaging/
-│   │   ├── Consumers/
-│   │   │   ├── ForecastRequestedConsumer.cs    # Consume solicitudes
-│   │   │   └── WeatherDataUpdatedConsumer.cs   # Consume actualizaciones
-│   │   ├── Publishers/
-│   │   │   └── EventPublisher.cs               # Publica eventos de dominio
-│   │   ├── Configuration/
-│   │   │   ├── RabbitMqSettings.cs             # Settings RabbitMQ
-│   │   │   └── MassTransitConfiguration.cs     # Configuración MassTransit
-│   │   └── Messages/
-│   │       ├── ForecastRequestedMessage.cs     # Mensaje de solicitud
-│   │       └── ForecastCreatedMessage.cs       # Mensaje de creación
-│   │
-│   ├── Caching/
-│   │   ├── RedisCacheService.cs         # Servicio de caché Redis
-│   │   └── CacheSettings.cs             # Configuración de caché
-│   │
-│   └── DependencyInjection.cs           # Registro de servicios Infrastructure
-│
-├── Api.Weather.Host/
-│   ├── Controllers/
-│   │   ├── WeatherController.cs         # Endpoint HTTP
-│   │   └── HealthController.cs          # Health checks
-│   ├── Resources/
-│   │   ├── ForecastRequest.cs           # Modelo de entrada
-│   │   └── ForecastResponse.cs          # Modelo de salida
-│   ├── Extensions/
-│   │   └── ServiceCollectionExtensions.cs # DI configuration
-│   ├── Middlewares/
-│   │   ├── ExceptionHandlerMiddleware.cs # Manejo de errores
-│   │   └── LoggingMiddleware.cs          # Logging de requests
-│   ├── appsettings.json                  # Configuración general
-│   ├── appsettings.Development.json      # Configuración desarrollo
-│   └── Program.cs                        # Entry point
-│
-└── tests/
-    ├── Api.Weather.Domain.Tests/
-    │   ├── Entities/
-    │   └── ValueObjects/
-    ├── Api.Weather.Application.Tests/
-    │   ├── Commands/
-    │   └── Queries/
-    ├── Api.Weather.Infrastructure.Tests/
-    │   ├── Repositories/
-    │   └── ExternalServices/
-    └── Api.Weather.Host.Tests/
-        └── Controllers/
-```
+### APIs Externas Gratuitas
+
+#### 1. OpenCage Geocoding API 🌍
+- **Función**: Convertir direcciones a coordenadas (lat/lng)
+- **Plan gratuito**: 2,500 peticiones/día
+- **Requisitos**: API Key gratuita (sin tarjeta de crédito)
+- **URL**: https://opencagedata.com/
+- **Documentación**: [OPENCAGE_API_SETUP.md](OPENCAGE_API_SETUP.md)
+
+#### 2. Open-Meteo Weather API ☀️
+- **Función**: Datos meteorológicos en tiempo real
+- **Plan gratuito**: Ilimitado, sin API Key
+- **Características**: Basado en modelos meteorológicos globales
+- **URL**: https://open-meteo.com
+- **Documentación**: [OPEN_METEO_SERVICE.md](OPEN_METEO_SERVICE.md)
+
+### Infraestructura
+- **Docker**: Contenedores para MongoDB
+- **Docker Compose**: Orquestación con replica set
+- **.NET 8**: Framework principal
 
 ---
 
-## Dependencias Entre Proyectos
+## 🚀 Guía de Configuración y Ejecución
 
-### Diagrama de Dependencias
+### 1. Requisitos Previos
+- ✅ .NET 8.0 SDK instalado
+- ✅ Docker Desktop (para MongoDB)
+- ✅ IDE: Visual Studio, Rider o VS Code
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│                    Api.Weather.Host                         │
-│                   (Presentation Layer)                      │
-│                                                             │
-└──────────────┬──────────────────────────┬───────────────────┘
-               │                          │
-               │ referencia               │ referencia
-               ▼                          ▼
-┌──────────────────────────┐   ┌──────────────────────────────┐
-│                          │   │                              │
-│  Api.Weather.Application │   │  Api.Weather.Infrastructure  │
-│   (Application Layer)    │   │   (Infrastructure Layer)     │
-│                          │   │                              │
-└────────────┬─────────────┘   └──────────┬───────────────────┘
-             │                            │
-             │ referencia                 │ referencia
-             ▼                            ▼
-┌────────────────────────────────────────────────────────────┐
-│                                                            │
-│                  Api.Weather.Domain                        │
-│                   (Domain Layer)                           │
-│              ¡Sin dependencias externas!                   │
-│                                                            │
-└────────────────────────────────────────────────────────────┘
+### 2. Configurar MongoDB
 
-Tests:
-┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
-│  Domain.Tests       │────▶│  Application.Tests  │────▶│  Infrastructure     │
-│  (solo Domain)      │     │  (Domain + App)     │     │  .Tests             │
-└─────────────────────┘     └─────────────────────┘     │  (Domain+App+Infra) │
-                                                         └─────────────────────┘
-                                    ┌─────────────────────────────┐
-                                    │  Host.Tests                 │
-                                    │  (todos los proyectos)      │
-                                    └─────────────────────────────┘
-```
-
----
-
-### Configuración de Referencias en .csproj
-
-#### 1️⃣ **Api.Weather.Domain**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <!-- Sin referencias a otros proyectos -->
-  <!-- Solo depende de .NET base -->
-</Project>
-```
-
-**Dependencias**: Ninguna
-
----
-
-#### 2️⃣ **Api.Weather.Application**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <!-- Referencias a otros proyectos -->
-  <ItemGroup>
-    <ProjectReference Include="..\Api.Weather.Domain\Api.Weather.Domain.csproj" />
-  </ItemGroup>
-
-  <!-- Paquetes NuGet -->
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="11.9.0" />
-  </ItemGroup>
-</Project>
-```
-
-**Dependencias**:
-- ✅ `Api.Weather.Domain` (referencia de proyecto)
-
----
-
-#### 3️⃣ **Api.Weather.Infrastructure**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <!-- Referencias a otros proyectos -->
-  <ItemGroup>
-    <ProjectReference Include="..\Api.Weather.Domain\Api.Weather.Domain.csproj" />
-    <ProjectReference Include="..\Api.Weather.Application\Api.Weather.Application.csproj" />
-  </ItemGroup>
-
-  <!-- Paquetes NuGet -->
-  <ItemGroup>
-    <!-- MongoDB -->
-    <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
-    
-    <!-- MassTransit y RabbitMQ -->
-    <PackageReference Include="MassTransit" Version="8.1.3" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.3" />
-    
-    <!-- HttpClient y Resiliencia -->
-    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.0" />
-    <PackageReference Include="Polly" Version="8.2.0" />
-    
-    <!-- Caché (opcional) -->
-    <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
-  </ItemGroup>
-</Project>
-```
-
-**Dependencias**:
-- ✅ `Api.Weather.Domain` (referencia de proyecto)
-- ✅ `Api.Weather.Application` (referencia de proyecto)
-
----
-
-#### 4️⃣ **Api.Weather.Host**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk.Web">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <!-- Referencias a otros proyectos -->
-  <ItemGroup>
-    <ProjectReference Include="..\Api.Weather.Application\Api.Weather.Application.csproj" />
-    <ProjectReference Include="..\Api.Weather.Infrastructure\Api.Weather.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <!-- Paquetes NuGet -->
-  <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
-  </ItemGroup>
-</Project>
-```
-
-**Dependencias**:
-- ✅ `Api.Weather.Application` (referencia de proyecto)
-- ✅ `Api.Weather.Infrastructure` (referencia de proyecto)
-- ⚠️ **NO** referencia directamente a `Domain` (lo obtiene transitivamente)
-
----
-
-### Proyectos de Tests
-
-#### 5️⃣ **Api.Weather.Domain.Tests**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-  <!-- Referencias a otros proyectos -->
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Api.Weather.Domain\Api.Weather.Domain.csproj" />
-  </ItemGroup>
-
-  <!-- Paquetes de Testing -->
-  <ItemGroup>
-    <PackageReference Include="xUnit" Version="2.6.4" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6" />
-    <PackageReference Include="NSubstitute" Version="5.1.0" />
-    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-  </ItemGroup>
-</Project>
-```
-
-**Dependencias**:
-- ✅ `Api.Weather.Domain` (referencia de proyecto)
-
----
-
-#### 6️⃣ **Api.Weather.Application.Tests**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-  <!-- Referencias a otros proyectos -->
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Api.Weather.Domain\Api.Weather.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Api.Weather.Application\Api.Weather.Application.csproj" />
-  </ItemGroup>
-
-  <!-- Paquetes de Testing -->
-  <ItemGroup>
-    <PackageReference Include="xUnit" Version="2.6.4" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6" />
-    <PackageReference Include="NSubstitute" Version="5.1.0" />
-    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-  </ItemGroup>
-</Project>
-```
-
-**Dependencias**:
-- ✅ `Api.Weather.Domain` (referencia de proyecto)
-- ✅ `Api.Weather.Application` (referencia de proyecto)
-
----
-
-#### 7️⃣ **Api.Weather.Infrastructure.Tests**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-  <!-- Referencias a otros proyectos -->
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Api.Weather.Domain\Api.Weather.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Api.Weather.Application\Api.Weather.Application.csproj" />
-    <ProjectReference Include="..\..\src\Api.Weather.Infrastructure\Api.Weather.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <!-- Paquetes de Testing -->
-  <ItemGroup>
-    <PackageReference Include="xUnit" Version="2.6.4" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6" />
-    <PackageReference Include="NSubstitute" Version="5.1.0" />
-    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-    <PackageReference Include="Testcontainers.MongoDb" Version="3.6.0" />
-    <PackageReference Include="Testcontainers.RabbitMq" Version="3.6.0" />
-  </ItemGroup>
-</Project>
-```
-
-**Dependencias**:
-- ✅ `Api.Weather.Domain` (referencia de proyecto)
-- ✅ `Api.Weather.Application` (referencia de proyecto)
-- ✅ `Api.Weather.Infrastructure` (referencia de proyecto)
-
----
-
-#### 8️⃣ **Api.Weather.Host.Tests**
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-  <!-- Referencias a otros proyectos -->
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Api.Weather.Domain\Api.Weather.Domain.csproj" />
-    <ProjectReference Include="..\..\src\Api.Weather.Application\Api.Weather.Application.csproj" />
-    <ProjectReference Include="..\..\src\Api.Weather.Infrastructure\Api.Weather.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\Api.Weather.Host\Api.Weather.Host.csproj" />
-  </ItemGroup>
-
-  <!-- Paquetes de Testing -->
-  <ItemGroup>
-    <PackageReference Include="xUnit" Version="2.6.4" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6" />
-    <PackageReference Include="NSubstitute" Version="5.1.0" />
-    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
-    <PackageReference Include="Testcontainers.MongoDb" Version="3.6.0" />
-    <PackageReference Include="Testcontainers.RabbitMq" Version="3.6.0" />
-  </ItemGroup>
-</Project>
-```
-
-**Dependencias**:
-- ✅ `Api.Weather.Domain` (referencia de proyecto)
-- ✅ `Api.Weather.Application` (referencia de proyecto)
-- ✅ `Api.Weather.Infrastructure` (referencia de proyecto)
-- ✅ `Api.Weather.Host` (referencia de proyecto)
-
----
-
-### Resumen de Dependencias
-
-| Proyecto | Depende de | Tipo de Proyecto |
-|----------|-----------|------------------|
-| **Domain** | Ninguno | Class Library |
-| **Application** | Domain | Class Library |
-| **Infrastructure** | Domain + Application | Class Library |
-| **Host** | Application + Infrastructure | Web Application |
-| **Domain.Tests** | Domain | Test Project |
-| **Application.Tests** | Domain + Application | Test Project |
-| **Infrastructure.Tests** | Domain + Application + Infrastructure | Test Project |
-| **Host.Tests** | Domain + Application + Infrastructure + Host | Test Project |
-
----
-
-### Reglas de Dependencias
-
-#### ✅ **Permitido**
-
-1. **Application** puede referenciar **Domain**
-2. **Infrastructure** puede referenciar **Domain** y **Application**
-3. **Host** puede referenciar **Application** e **Infrastructure**
-4. Los proyectos de test pueden referenciar los proyectos que prueban
-
-#### ❌ **Prohibido**
-
-1. **Domain** NO puede referenciar ningún otro proyecto
-2. **Application** NO puede referenciar **Infrastructure** o **Host**
-3. **Infrastructure** NO puede referenciar **Host**
-4. Referencias circulares entre proyectos
-
----
-
-### Comandos para Agregar Referencias
-
-Si necesitas crear los proyectos y agregar las referencias, usa estos comandos:
-
+#### Opción A: Con Docker Compose (Recomendado)
 ```bash
-# Crear solución
-dotnet new sln -n Api.Practice
+# Ir a la carpeta .docker
+cd .docker
 
-# Crear proyectos
-dotnet new classlib -n Api.Weather.Domain -o src/Api.Weather.Domain
-dotnet new classlib -n Api.Weather.Application -o src/Api.Weather.Application
-dotnet new classlib -n Api.Weather.Infrastructure -o src/Api.Weather.Infrastructure
-dotnet new webapi -n Api.Weather.Host -o src/Api.Weather.Host
+# Iniciar MongoDB con replica set
+docker compose --profile infrastructure up -d
 
-# Crear proyectos de tests
-dotnet new xunit -n Api.Weather.Domain.Tests -o tests/Api.Weather.Domain.Tests
-dotnet new xunit -n Api.Weather.Application.Tests -o tests/Api.Weather.Application.Tests
-dotnet new xunit -n Api.Weather.Infrastructure.Tests -o tests/Api.Weather.Infrastructure.Tests
-dotnet new xunit -n Api.Weather.Host.Tests -o tests/Api.Weather.Host.Tests
+# Verificar que está corriendo
+docker ps | grep mongodb
+```
 
-# Agregar proyectos a la solución
-dotnet sln add src/Api.Weather.Domain/Api.Weather.Domain.csproj
-dotnet sln add src/Api.Weather.Application/Api.Weather.Application.csproj
-dotnet sln add src/Api.Weather.Infrastructure/Api.Weather.Infrastructure.csproj
-dotnet sln add src/Api.Weather.Host/Api.Weather.Host.csproj
-dotnet sln add tests/Api.Weather.Domain.Tests/Api.Weather.Domain.Tests.csproj
-dotnet sln add tests/Api.Weather.Application.Tests/Api.Weather.Application.Tests.csproj
-dotnet sln add tests/Api.Weather.Infrastructure.Tests/Api.Weather.Infrastructure.Tests.csproj
-dotnet sln add tests/Api.Weather.Host.Tests/Api.Weather.Host.Tests.csproj
+#### Opción B: Con el script helper
+```bash
+# Hacer ejecutable (primera vez)
+chmod +x mongodb.sh
 
-# Agregar referencias entre proyectos de src/
-cd src/Api.Weather.Application
-dotnet add reference ../Api.Weather.Domain/Api.Weather.Domain.csproj
+# Comandos disponibles
+./mongodb.sh start      # Iniciar MongoDB
+./mongodb.sh stop       # Detener MongoDB
+./mongodb.sh restart    # Reiniciar MongoDB
+./mongodb.sh logs       # Ver logs en tiempo real
+./mongodb.sh status     # Ver estado del contenedor
+./mongodb.sh shell      # Abrir MongoDB Shell
+./mongodb.sh clean      # Limpiar datos (con confirmación)
+```
 
-cd ../Api.Weather.Infrastructure
-dotnet add reference ../Api.Weather.Domain/Api.Weather.Domain.csproj
-dotnet add reference ../Api.Weather.Application/Api.Weather.Application.csproj
+### 3. Configurar API Keys
 
-cd ../Api.Weather.Host
-dotnet add reference ../Api.Weather.Application/Api.Weather.Application.csproj
-dotnet add reference ../Api.Weather.Infrastructure/Api.Weather.Infrastructure.csproj
+Edita `src/Api.Weather.Host/appsettings.Development.json`:
 
-# Agregar referencias en proyectos de tests/
-cd ../../tests/Api.Weather.Domain.Tests
-dotnet add reference ../../src/Api.Weather.Domain/Api.Weather.Domain.csproj
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "OpenCage": {
+    "ApiKey": "TU_API_KEY_AQUI"  // 👈 Reemplaza esto
+  },
+  "MongoDbSettings": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "WeatherDb",
+    "CollectionName": "Forecasts"
+  }
+}
+```
 
-cd ../Api.Weather.Application.Tests
-dotnet add reference ../../src/Api.Weather.Domain/Api.Weather.Domain.csproj
-dotnet add reference ../../src/Api.Weather.Application/Api.Weather.Application.csproj
+**Obtener API Key de OpenCage** (2 minutos):
+1. Ve a https://opencagedata.com/
+2. Haz clic en "Sign Up"
+3. Completa el registro (sin tarjeta de crédito)
+4. Copia tu API Key del dashboard
+5. Pégala en `appsettings.Development.json`
 
-cd ../Api.Weather.Infrastructure.Tests
-dotnet add reference ../../src/Api.Weather.Domain/Api.Weather.Domain.csproj
-dotnet add reference ../../src/Api.Weather.Application/Api.Weather.Application.csproj
-dotnet add reference ../../src/Api.Weather.Infrastructure/Api.Weather.Infrastructure.csproj
+Ver guía detallada: [OPENCAGE_API_SETUP.md](OPENCAGE_API_SETUP.md)
 
-cd ../Api.Weather.Host.Tests
-dotnet add reference ../../src/Api.Weather.Domain/Api.Weather.Domain.csproj
-dotnet add reference ../../src/Api.Weather.Application/Api.Weather.Application.csproj
-dotnet add reference ../../src/Api.Weather.Infrastructure/Api.Weather.Infrastructure.csproj
-dotnet add reference ../../src/Api.Weather.Host/Api.Weather.Host.csproj
-
-# Volver al directorio raíz
-cd ../..
+### 4. Restaurar y Compilar
+```bash
+# Restaurar paquetes NuGet
+dotnet restore
 
 # Compilar toda la solución
 dotnet build
 ```
 
----
-
-### Verificar Dependencias
-
-Para verificar las referencias de un proyecto:
-
+### 5. Ejecutar la Aplicación
 ```bash
-# Ver referencias de un proyecto específico
-dotnet list src/Api.Weather.Host/Api.Weather.Host.csproj reference
+# Opción 1: Desde la raíz del proyecto
+dotnet run --project src/Api.Weather.Host/Api.Weather.Host.csproj
 
-# Ver todas las referencias en la solución
-dotnet sln list
+# Opción 2: Desde la carpeta del proyecto
+cd src/Api.Weather.Host
+dotnet run
 ```
 
----
+### 6. Acceder a la Aplicación
 
-## Implementación de CQRS sin MediatR
+La API estará disponible en:
+- 🌐 **HTTPS**: https://localhost:5001
+- 🌐 **HTTP**: http://localhost:5000
+- 📚 **Swagger UI**: https://localhost:5001/swagger
 
-Este proyecto implementa el patrón CQRS (Command Query Responsibility Segregation) **sin usar MediatR**. En su lugar, los servicios se inyectan directamente mediante Dependency Injection.
+### 7. Probar la API
 
-### Arquitectura de Servicios
+#### Con Swagger UI (Recomendado)
+1. Abre https://localhost:5001/swagger
+2. Haz clic en el endpoint `GET /api/Weather`
+3. Haz clic en "Try it out"
+4. Ingresa el body:
+   ```json
+   {
+     "location": "Madrid, España",
+     "time": "2025-12-26T10:00:00Z"
+   }
+   ```
+5. Haz clic en "Execute"
 
-```
-Controller → Application Service → Domain + Infrastructure
-```
-
-### Ejemplo de Implementación
-
-#### 1. **Definir el Command (DTO)**
-
-```csharp
-// Application/Commands/RequestForecastCommand.cs
-namespace Api.Weather.Application.Commands;
-
-public record RequestForecastCommand(string PostalCode, DateOnly Date);
-```
-
-#### 2. **Definir el Query (DTO)**
-
-```csharp
-// Application/Queries/GetForecastQuery.cs
-namespace Api.Weather.Application.Queries;
-
-public record GetForecastQuery(string PostalCode, DateOnly Date);
-```
-
-#### 3. **Implementar el Servicio de Aplicación**
-
-```csharp
-// Application/Interfaces/IForecastApplicationService.cs
-namespace Api.Weather.Application.Interfaces;
-
-public interface IForecastApplicationService
-{
-    Task<ForecastDto> RequestForecastAsync(RequestForecastCommand command, CancellationToken cancellationToken = default);
-    Task<ForecastDto> GetForecastAsync(GetForecastQuery query, CancellationToken cancellationToken = default);
-}
-
-// Application/Services/ForecastApplicationService.cs
-namespace Api.Weather.Application.Services;
-
-public class ForecastApplicationService : IForecastApplicationService
-{
-    private readonly IForecastRepository _repository;
-    private readonly IWeatherService _weatherService;
-    private readonly IEventPublisher _eventPublisher;
-    private readonly IValidator<RequestForecastCommand> _commandValidator;
-    private readonly ILogger<ForecastApplicationService> _logger;
-
-    public ForecastApplicationService(
-        IForecastRepository repository,
-        IWeatherService weatherService,
-        IEventPublisher eventPublisher,
-        IValidator<RequestForecastCommand> commandValidator,
-        ILogger<ForecastApplicationService> logger)
-    {
-        _repository = repository;
-        _weatherService = weatherService;
-        _eventPublisher = eventPublisher;
-        _commandValidator = commandValidator;
-        _logger = logger;
-    }
-
-    public async Task<ForecastDto> RequestForecastAsync(
-        RequestForecastCommand command, 
-        CancellationToken cancellationToken = default)
-    {
-        // Validar
-        var validationResult = await _commandValidator.ValidateAsync(command, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            throw new ValidationException(validationResult.Errors);
-        }
-
-        // Crear entidad de dominio
-        var postalCode = new PostalCode(command.PostalCode);
-        
-        // Llamar servicio externo
-        var weatherData = await _weatherService.GetForecastAsync(command.PostalCode, command.Date);
-        
-        // Crear agregado
-        var forecast = Forecast.Create(postalCode, command.Date, weatherData);
-        
-        // Guardar
-        await _repository.SaveAsync(forecast);
-        
-        // Publicar evento
-        await _eventPublisher.PublishAsync(new ForecastCreatedEvent(forecast.Id, forecast.PostalCode));
-        
-        _logger.LogInformation("Forecast created for {PostalCode} on {Date}", command.PostalCode, command.Date);
-        
-        return MapToDto(forecast);
-    }
-
-    public async Task<ForecastDto> GetForecastAsync(
-        GetForecastQuery query, 
-        CancellationToken cancellationToken = default)
-    {
-        // Buscar en caché/repositorio
-        var forecast = await _repository.GetByPostalCodeAndDateAsync(query.PostalCode, query.Date);
-        
-        if (forecast == null)
-        {
-            throw new ForecastNotFoundException($"Forecast not found for {query.PostalCode} on {query.Date}");
-        }
-        
-        return MapToDto(forecast);
-    }
-
-    private ForecastDto MapToDto(Forecast forecast)
-    {
-        return new ForecastDto
-        {
-            Id = forecast.Id,
-            PostalCode = forecast.PostalCode.Value,
-            Date = forecast.Date,
-            Temperature = forecast.Temperature,
-            Humidity = forecast.Humidity,
-            Description = forecast.Description
-        };
-    }
-}
+#### Con curl
+```bash
+curl -X GET https://localhost:5001/api/Weather \
+  -H "Content-Type: application/json" \
+  -d '{
+    "location": "Madrid, España",
+    "time": "2025-12-26T10:00:00Z"
+  }' \
+  -k
 ```
 
-#### 4. **Usar en el Controller**
-
-```csharp
-// Host/Controllers/WeatherController.cs
-namespace Api.Weather.Host.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class WeatherController : ControllerBase
-{
-    private readonly IForecastApplicationService _forecastService;
-    private readonly ILogger<WeatherController> _logger;
-
-    public WeatherController(
-        IForecastApplicationService forecastService,
-        ILogger<WeatherController> logger)
-    {
-        _forecastService = forecastService;
-        _logger = logger;
-    }
-
-    [HttpPost("forecast")]
-    [ProducesResponseType(typeof(ForecastResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> RequestForecast(
-        [FromBody] ForecastRequest request,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            var command = new RequestForecastCommand(request.PostalCode, request.Time);
-            var result = await _forecastService.RequestForecastAsync(command, cancellationToken);
-            
-            return CreatedAtAction(
-                nameof(GetForecast), 
-                new { postalCode = result.PostalCode, date = result.Date }, 
-                result);
-        }
-        catch (ValidationException ex)
-        {
-            return BadRequest(new { errors = ex.Errors });
-        }
-    }
-
-    [HttpGet("forecast/{postalCode}/{date}")]
-    [ProducesResponseType(typeof(ForecastResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetForecast(
-        string postalCode,
-        DateOnly date,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            var query = new GetForecastQuery(postalCode, date);
-            var result = await _forecastService.GetForecastAsync(query, cancellationToken);
-            
-            return Ok(result);
-        }
-        catch (ForecastNotFoundException ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-    }
-}
-```
-
-#### 5. **Registrar en Program.cs**
-
-```csharp
-// Host/Program.cs
-var builder = WebApplication.CreateBuilder(args);
-
-// Registrar servicios de aplicación
-builder.Services.AddScoped<IForecastApplicationService, ForecastApplicationService>();
-
-// Registrar validadores de FluentValidation
-builder.Services.AddValidatorsFromAssemblyContaining<RequestForecastCommandValidator>();
-
-// Otros servicios...
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-
-app.Run();
-```
-
-### Ventajas de esta Aproximación (sin MediatR)
-
-✅ **Simplicidad**: Menos abstracciones y más directo
-✅ **Claridad**: Es obvio qué servicio se está llamando
-✅ **Menor curva de aprendizaje**: No requiere entender MediatR
-✅ **Menos dependencias**: Una librería menos en el proyecto
-✅ **Debugging más fácil**: Stack traces más simples
-✅ **Performance**: Sin overhead de reflection de MediatR
-
-### Cuándo considerar MediatR
-
-Considera usar MediatR si necesitas:
-- Pipeline behaviors (logging, validación, transacciones automáticas)
-- Múltiples handlers para un mismo mensaje
-- Desacoplamiento extremo entre capas
-- Proyectos muy grandes con muchos commands/queries
-
----
-
-## Ventajas de DDD
-
-### ✅ Ventajas
-
-1. **Separación de responsabilidades**: Cada capa tiene un propósito claro
-2. **Testeable**: El dominio es independiente y fácil de testear
-3. **Mantenible**: Cambios en una capa no afectan a otras
-4. **Escalable**: Fácil agregar nuevas funcionalidades
-5. **Dominio primero**: La lógica de negocio está protegida y centralizada
-
-### ⚠️ Consideraciones
-
-1. **Complejidad inicial**: Más estructura que una arquitectura simple
-2. **Overhead**: Para proyectos muy pequeños puede ser excesivo
-3. **Curva de aprendizaje**: Requiere entender bien los conceptos
-
----
-
-## Servicios Meteorológicos Públicos
-
-### 1. **OpenWeatherMap** ⭐ Recomendado
-- **URL**: https://openweathermap.org/api
-- **Plan gratuito**: 1,000 llamadas/día
-- **Formato**: JSON
-- **Características**: Predicción actual, 5 días, histórico
-- **Endpoint ejemplo**:
-  ```
-  https://api.openweathermap.org/data/2.5/forecast?zip=28001,ES&appid=API_KEY
-  ```
-
-### 2. **AEMET OpenData** (España) 🇪🇸
-- **URL**: https://opendata.aemet.es
-- **Plan gratuito**: Sí (requiere API key gratuita)
-- **Formato**: JSON
-- **Características**: Datos oficiales españoles, ideal para códigos postales españoles
-- **Endpoint ejemplo**:
-  ```
-  https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/{codigo_municipio}
-  ```
-
-### 3. **Open-Meteo** 🆓
-- **URL**: https://open-meteo.com
-- **Plan gratuito**: Sin límites, sin API key
-- **Formato**: JSON
-- **Características**: Totalmente gratuito, basado en coordenadas
-
-### 4. **WeatherAPI**
-- **URL**: https://www.weatherapi.com
-- **Plan gratuito**: 1 millón llamadas/mes
-- **Formato**: JSON
-
-**Recomendación**: Para códigos postales españoles usar **AEMET**, para internacional **OpenWeatherMap** u **Open-Meteo**.
-
----
-
-## Arquitectura de Mensajería (RabbitMQ + MassTransit)
-
-### ¿Por qué usar mensajería?
-
-1. **Desacoplamiento**: Los servicios no necesitan conocerse directamente
-2. **Escalabilidad**: Procesamiento asíncrono de tareas pesadas
-3. **Resiliencia**: Si un servicio cae, los mensajes se mantienen en la cola
-4. **Distribución de carga**: Múltiples consumidores pueden procesar mensajes
-
-### Flujo de Mensajería en Weather API
-
-```
-Usuario → API Controller → Publica Mensaje → RabbitMQ
-                                                  ↓
-                              MassTransit Consumer ← Lee Mensaje
-                                                  ↓
-                              Procesa (llama servicio externo)
-                                                  ↓
-                              Guarda en MongoDB → Publica Evento
-```
-
-### Ejemplo de Uso
-
-**1. Publicar un evento**:
-```csharp
-// Application/Interfaces/IEventPublisher.cs
-public interface IEventPublisher
-{
-    Task PublishAsync<T>(T message) where T : class;
-}
-
-// Infrastructure/Messaging/Publishers/EventPublisher.cs
-public class EventPublisher : IEventPublisher
-{
-    private readonly IPublishEndpoint _publishEndpoint;
-    
-    public async Task PublishAsync<T>(T message) where T : class
-    {
-        await _publishEndpoint.Publish(message);
-    }
-}
-```
-
-**2. Consumir un mensaje**:
-```csharp
-// Infrastructure/Messaging/Consumers/ForecastRequestedConsumer.cs
-public class ForecastRequestedConsumer : IConsumer<ForecastRequestedMessage>
-{
-    private readonly IWeatherService _weatherService;
-    private readonly IForecastRepository _repository;
-    
-    public async Task Consume(ConsumeContext<ForecastRequestedMessage> context)
-    {
-        var forecast = await _weatherService.GetForecastAsync(
-            context.Message.PostalCode,
-            context.Message.Date
-        );
-        
-        await _repository.SaveAsync(forecast);
-        
-        await context.Publish(new ForecastCreatedMessage { Id = forecast.Id });
-    }
-}
-```
-
-**3. Configuración en Program.cs**:
-```csharp
-// Registrar MassTransit con RabbitMQ
-builder.Services.AddMassTransit(config =>
-{
-    // Registrar consumidores
-    config.AddConsumer<ForecastRequestedConsumer>();
-    config.AddConsumer<WeatherDataUpdatedConsumer>();
-    
-    // Configurar RabbitMQ
-    config.UsingRabbitMq((context, cfg) =>
-    {
-        cfg.Host("localhost", "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
-        
-        // Configurar endpoints
-        cfg.ConfigureEndpoints(context);
-    });
-});
-```
-
-### Ventajas de MassTransit
-
-- ✅ Abstracción sobre RabbitMQ (facilita cambiar a Azure Service Bus, etc.)
-- ✅ Manejo automático de retry y error handling
-- ✅ Soporte para sagas y orquestación
-- ✅ Serialización automática
-- ✅ Inyección de dependencias integrada
-
----
-
-## Persistencia con MongoDB
-
-### ¿Por qué MongoDB para este proyecto?
-
-1. **Flexibilidad**: Esquema flexible para diferentes tipos de pronósticos
-2. **Rendimiento**: Excelente para operaciones de lectura
-3. **Escalabilidad horizontal**: Sharding nativo
-4. **Documentos JSON**: Mapeo natural con objetos C#
-
-### Configuración MongoDB
-
-**1. Contexto MongoDB**:
-```csharp
-// Infrastructure/Persistence/Context/MongoDbContext.cs
-public class MongoDbContext
-{
-    private readonly IMongoDatabase _database;
-    
-    public MongoDbContext(IOptions<MongoDbSettings> settings)
-    {
-        var client = new MongoClient(settings.Value.ConnectionString);
-        _database = client.GetDatabase(settings.Value.DatabaseName);
-    }
-    
-    public IMongoCollection<Forecast> Forecasts => 
-        _database.GetCollection<Forecast>("forecasts");
-    
-    public IMongoCollection<WeatherAlert> Alerts => 
-        _database.GetCollection<WeatherAlert>("alerts");
-}
-```
-
-**2. Configuración de índices**:
-```csharp
-// Infrastructure/Persistence/Configurations/IndexConfiguration.cs
-public static class IndexConfiguration
-{
-    public static void ConfigureIndexes(IMongoDatabase database)
-    {
-        var forecasts = database.GetCollection<Forecast>("forecasts");
-        
-        // Índice compuesto para búsquedas por código postal y fecha
-        var indexKeys = Builders<Forecast>.IndexKeys
-            .Ascending(f => f.PostalCode)
-            .Ascending(f => f.Date);
-            
-        forecasts.Indexes.CreateOne(new CreateIndexModel<Forecast>(indexKeys));
-        
-        // Índice TTL para expiración automática (opcional)
-        var ttlIndex = Builders<Forecast>.IndexKeys.Ascending(f => f.CreatedAt);
-        var ttlOptions = new CreateIndexOptions { ExpireAfter = TimeSpan.FromDays(30) };
-        forecasts.Indexes.CreateOne(new CreateIndexModel<Forecast>(ttlIndex, ttlOptions));
-    }
-}
-```
-
-**3. Repositorio con MongoDB**:
-```csharp
-// Infrastructure/Persistence/Repositories/ForecastRepository.cs
-public class ForecastRepository : IForecastRepository
-{
-    private readonly IMongoCollection<Forecast> _forecasts;
-    
-    public async Task<Forecast?> GetByPostalCodeAndDateAsync(
-        string postalCode, 
-        DateOnly date)
-    {
-        return await _forecasts
-            .Find(f => f.PostalCode == postalCode && f.Date == date)
-            .FirstOrDefaultAsync();
-    }
-    
-    public async Task SaveAsync(Forecast forecast)
-    {
-        await _forecasts.ReplaceOneAsync(
-            f => f.Id == forecast.Id,
-            forecast,
-            new ReplaceOptions { IsUpsert = true }
-        );
-    }
-}
-```
-
-**4. Configuración en appsettings.json**:
+#### Respuesta esperada
 ```json
 {
-  "MongoDbSettings": {
-    "ConnectionString": "mongodb://localhost:27017",
-    "DatabaseName": "weather_db"
-  },
-  "RabbitMqSettings": {
-    "Host": "localhost",
-    "Username": "guest",
-    "Password": "guest"
-  }
+  "location": "Madrid, España",
+  "time": "1735210800",
+  "temperature": "15.2",
+  "weather": "Parcialmente nublado"
 }
 ```
 
 ---
 
-## Patrones Utilizados
+## 🗄️ MongoDB - Persistencia de Datos
 
-### Arquitectura y Diseño
-- **Repository Pattern**: Abstracción del acceso a datos
-- **CQRS** (Command Query Responsibility Segregation): Separación lectura/escritura
-- **Dependency Injection**: Inversión de control
-- **Value Objects**: Objetos inmutables con validación
-- **Domain Events**: Comunicación desacoplada
+### Configuración con Options Pattern
 
-### Mensajería y Comunicación
-- **Publish/Subscribe**: Publicación de eventos con múltiples suscriptores
-- **Message Consumer**: Consumidores de mensajes con MassTransit
-- **Event-Driven Architecture**: Arquitectura basada en eventos
-- **Outbox Pattern** (opcional): Garantiza consistencia entre DB y mensajería
+El proyecto utiliza el **Options Pattern** de .NET para una configuración fuertemente tipada y testeable:
 
-### Persistencia
-- **Unit of Work** (MongoDB): Transacciones y consistencia
-- **Document Store Pattern**: Almacenamiento de documentos NoSQL
-- **Index Strategy**: Optimización de consultas con índices
-
-### Resiliencia
-- **Retry Pattern**: Reintentos con Polly
-- **Circuit Breaker**: Protección contra fallos en cascada
-- **Timeout Pattern**: Límites de tiempo en operaciones externas
-
----
-
-## Dependencias y Paquetes NuGet
-
-### Domain
-```xml
-<!-- Sin dependencias externas, solo .NET 8 -->
-```
-
-### Application
-```xml
-<PackageReference Include="FluentValidation" Version="11.9.0" />
-```
-
-### Infrastructure
-```xml
-<!-- MongoDB -->
-<PackageReference Include="MongoDB.Driver" Version="2.23.1" />
-
-<!-- MassTransit y RabbitMQ -->
-<PackageReference Include="MassTransit" Version="8.1.3" />
-<PackageReference Include="MassTransit.RabbitMQ" Version="8.1.3" />
-
-<!-- HttpClient y Resiliencia -->
-<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-<PackageReference Include="Microsoft.Extensions.Http.Polly" Version="8.0.0" />
-<PackageReference Include="Polly" Version="8.2.0" />
-
-<!-- Caché (opcional) -->
-<PackageReference Include="StackExchange.Redis" Version="2.7.10" />
-```
-
-### Host/API
-```xml
-<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
-```
-
-### Tests
-```xml
-<PackageReference Include="xUnit" Version="2.6.4" />
-<PackageReference Include="NSubstitute" Version="5.1.0" />
-<PackageReference Include="AwesomeAssertions" Version="9.3.0" />
-<PackageReference Include="Testcontainers.MongoDb" Version="3.6.0" />
-<PackageReference Include="Testcontainers.RabbitMq" Version="3.6.0" />
-```
-
-**Nota sobre librerías de testing**:
-- **NSubstitute**: Framework de mocking más simple y expresivo que Moq
-- **AwesomeAssertions 9.3.0**: Librería de aserciones fluidas para escribir tests más legibles y expresivos
-
----
-
-## Ejemplos de Testing
-
-### NSubstitute - Mocking
-
-**Crear un mock**:
 ```csharp
-// Crear un mock de una interfaz
-var weatherService = Substitute.For<IWeatherService>();
-
-// Configurar comportamiento
-weatherService
-    .GetForecastAsync("28001", Arg.Any<DateOnly>())
-    .Returns(new Forecast { Temperature = 25 });
-
-// Verificar que se llamó
-await weatherService.Received(1).GetForecastAsync("28001", Arg.Any<DateOnly>());
-
-// Verificar que NO se llamó
-weatherService.DidNotReceive().GetHistoricalData(Arg.Any<string>());
-```
-
-**Ejemplo completo de test**:
-```csharp
-public class ForecastServiceTests
+// 1. Clase de configuración
+public class MongoDbSettings
 {
-    private readonly IWeatherService _weatherService;
-    private readonly IForecastRepository _repository;
-    private readonly ForecastService _sut;
+    public string ConnectionString { get; set; } = string.Empty;
+    public string DatabaseName { get; set; } = string.Empty;
+    public string CollectionName { get; set; } = "Forecasts";
+}
 
-    public ForecastServiceTests()
-    {
-        _weatherService = Substitute.For<IWeatherService>();
-        _repository = Substitute.For<IForecastRepository>();
-        _sut = new ForecastService(_weatherService, _repository);
-    }
+// 2. Registro en DI
+services.Configure<MongoDbSettings>(
+    configuration.GetSection("MongoDbSettings"));
 
-    [Fact]
-    public async Task GetForecast_ShouldReturnFromCache_WhenExists()
-    {
-        // Arrange
-        var expectedForecast = new Forecast 
-        { 
-            PostalCode = "28001", 
-            Temperature = 25 
-        };
-        
-        _repository
-            .GetByPostalCodeAndDateAsync("28001", Arg.Any<DateOnly>())
-            .Returns(expectedForecast);
-
-        // Act
-        var result = await _sut.GetForecastAsync("28001", DateOnly.FromDateTime(DateTime.Today));
-
-        // Assert
-        result.Should().NotBeNull();
-        result.Temperature.Should().Be(25);
-        
-        // Verificar que NO se llamó al servicio externo
-        await _weatherService.DidNotReceive().GetForecastAsync(Arg.Any<string>(), Arg.Any<DateOnly>());
-    }
+// 3. Inyección en servicios
+public ForecastRepository(
+    IMongoClient client, 
+    IOptions<MongoDbSettings> settings)
+{
+    var config = settings.Value;
+    // Usar config.ConnectionString, config.DatabaseName, etc.
 }
 ```
 
-### AwesomeAssertions 9.3.0 - Aserciones
+**Beneficios del Options Pattern**:
+- ✅ Configuración fuertemente tipada
+- ✅ Validación en tiempo de compilación
+- ✅ Fácil de testear con mocks
+- ✅ Soporte para recarga en caliente (con IOptionsSnapshot)
+- ✅ Integración perfecta con DI
 
-**Aserciones básicas**:
-```csharp
-// Objetos
-forecast.Should().NotBeNull();
-forecast.Should().BeOfType<Forecast>();
+Ver documentación completa: [OPTIONS_PATTERN.md](../OPTIONS_PATTERN.md)
 
-// Strings
-postalCode.Should().Be("28001");
-postalCode.Should().StartWith("280");
-postalCode.Should().HaveLength(5);
+### Estructura de la Base de Datos
 
-// Números
-temperature.Should().BeGreaterThan(0);
-temperature.Should().BeInRange(-10, 50);
+**Base de datos**: `WeatherDb`
+**Colección**: `Forecasts`
 
-// Colecciones
-forecasts.Should().NotBeEmpty();
-forecasts.Should().HaveCount(7);
-forecasts.Should().Contain(f => f.PostalCode == "28001");
-forecasts.Should().OnlyContain(f => f.Temperature > 0);
-
-// Excepciones
-var act = async () => await service.GetForecastAsync(null, DateOnly.Today);
-await act.Should().ThrowAsync<ArgumentNullException>()
-    .WithMessage("*postalCode*");
-
-// Fechas
-createdAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-date.Should().BeOnOrAfter(DateOnly.FromDateTime(DateTime.Today));
-```
-
-**Aserciones de objetos complejos**:
-```csharp
-forecast.Should().BeEquivalentTo(new 
+**Documento de ejemplo**:
+```json
 {
-    PostalCode = "28001",
-    Temperature = 25,
-    Humidity = 60
-}, options => options.ExcludingMissingMembers());
-
-// Comparar propiedades específicas
-forecast.Should().BeEquivalentTo(expectedForecast, options => options
-    .Including(f => f.PostalCode)
-    .Including(f => f.Temperature)
-    .Excluding(f => f.CreatedAt));
-```
-
-### Estructura de un Test Completo
-
-```csharp
-public class GetForecastQueryHandlerTests
-{
-    private readonly IForecastRepository _repository;
-    private readonly IWeatherService _weatherService;
-    private readonly IEventPublisher _eventPublisher;
-    private readonly GetForecastQueryHandler _handler;
-
-    public GetForecastQueryHandlerTests()
-    {
-        _repository = Substitute.For<IForecastRepository>();
-        _weatherService = Substitute.For<IWeatherService>();
-        _eventPublisher = Substitute.For<IEventPublisher>();
-        _handler = new GetForecastQueryHandler(_repository, _weatherService, _eventPublisher);
-    }
-
-    [Fact]
-    public async Task Handle_ShouldReturnCachedForecast_WhenExists()
-    {
-        // Arrange
-        var query = new GetForecastQuery("28001", DateOnly.FromDateTime(DateTime.Today));
-        var cachedForecast = new Forecast
-        {
-            Id = Guid.NewGuid(),
-            PostalCode = "28001",
-            Temperature = 25,
-            Humidity = 60,
-            Date = DateOnly.FromDateTime(DateTime.Today)
-        };
-
-        _repository
-            .GetByPostalCodeAndDateAsync("28001", query.Date)
-            .Returns(cachedForecast);
-
-        // Act
-        var result = await _handler.Handle(query, CancellationToken.None);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(new
-        {
-            PostalCode = "28001",
-            Temperature = 25,
-            Humidity = 60
-        });
-
-        // Verificaciones
-        await _repository.Received(1).GetByPostalCodeAndDateAsync("28001", query.Date);
-        await _weatherService.DidNotReceive().GetForecastAsync(Arg.Any<string>(), Arg.Any<DateOnly>());
-        await _eventPublisher.DidNotReceive().PublishAsync(Arg.Any<object>());
-    }
-
-    [Fact]
-    public async Task Handle_ShouldCallExternalService_WhenNotInCache()
-    {
-        // Arrange
-        var query = new GetForecastQuery("28001", DateOnly.FromDateTime(DateTime.Today));
-        var externalForecast = new Forecast
-        {
-            Id = Guid.NewGuid(),
-            PostalCode = "28001",
-            Temperature = 22,
-            Date = query.Date
-        };
-
-        _repository
-            .GetByPostalCodeAndDateAsync("28001", query.Date)
-            .Returns((Forecast?)null);
-
-        _weatherService
-            .GetForecastAsync("28001", query.Date)
-            .Returns(externalForecast);
-
-        // Act
-        var result = await _handler.Handle(query, CancellationToken.None);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.Temperature.Should().Be(22);
-
-        await _weatherService.Received(1).GetForecastAsync("28001", query.Date);
-        await _repository.Received(1).SaveAsync(Arg.Is<Forecast>(f => 
-            f.PostalCode == "28001" && f.Temperature == 22));
-        await _eventPublisher.Received(1).PublishAsync(Arg.Any<ForecastCreatedEvent>());
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData(null)]
-    [InlineData("123")]
-    public async Task Handle_ShouldThrowException_WhenInvalidPostalCode(string invalidPostalCode)
-    {
-        // Arrange
-        var query = new GetForecastQuery(invalidPostalCode, DateOnly.FromDateTime(DateTime.Today));
-
-        // Act
-        var act = async () => await _handler.Handle(query, CancellationToken.None);
-
-        // Assert
-        await act.Should().ThrowAsync<InvalidPostalCodeException>()
-            .WithMessage("*postal code*");
-    }
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "location": "Madrid, España",
+  "time": ISODate("2025-12-26T10:00:00Z"),
+  "temperature": "15.2",
+  "description": "Parcialmente nublado"
 }
 ```
 
-### Tests de Integración con Testcontainers
+### Comandos Útiles de MongoDB
 
-```csharp
-public class ForecastRepositoryIntegrationTests : IAsyncLifetime
-{
-    private MongoDbContainer _mongoContainer;
-    private IMongoDatabase _database;
-    private ForecastRepository _repository;
+```bash
+# Conectarse al shell de MongoDB
+docker exec -it mongodb mongosh
 
-    public async Task InitializeAsync()
-    {
-        _mongoContainer = new MongoDbBuilder()
-            .WithImage("mongo:7.0")
-            .Build();
+# Dentro del shell:
+show dbs                          # Ver bases de datos
+use WeatherDb                     # Usar la BD del proyecto
+show collections                  # Ver colecciones
+db.Forecasts.find().pretty()      # Ver todos los pronósticos
+db.Forecasts.countDocuments()     # Contar documentos
 
-        await _mongoContainer.StartAsync();
+# Buscar por ubicación
+db.Forecasts.find({ location: "Madrid, España" }).pretty()
 
-        var client = new MongoClient(_mongoContainer.GetConnectionString());
-        _database = client.GetDatabase("test_weather_db");
-        _repository = new ForecastRepository(_database);
-    }
+# Eliminar todos los documentos
+db.Forecasts.deleteMany({})
+```
 
-    [Fact]
-    public async Task SaveAsync_ShouldPersistForecast()
-    {
-        // Arrange
-        var forecast = new Forecast
-        {
-            Id = Guid.NewGuid(),
-            PostalCode = "28001",
-            Temperature = 25,
-            Date = DateOnly.FromDateTime(DateTime.Today)
-        };
+### Gestión de MongoDB con Script
 
-        // Act
-        await _repository.SaveAsync(forecast);
-        var result = await _repository.GetByPostalCodeAndDateAsync("28001", forecast.Date);
+```bash
+./mongodb.sh start     # Iniciar contenedor MongoDB
+./mongodb.sh stop      # Detener contenedor
+./mongodb.sh restart   # Reiniciar contenedor
+./mongodb.sh logs      # Ver logs en tiempo real
+./mongodb.sh status    # Ver estado y replica set
+./mongodb.sh shell     # Abrir MongoDB Shell interactivo
+./mongodb.sh clean     # Eliminar contenedor y datos
+```
 
-        // Assert
-        result.Should().NotBeNull();
-        result.Should().BeEquivalentTo(forecast);
-    }
+Ver documentación completa de MongoDB: [MONGODB_CONFIG.md](../MONGODB_CONFIG.md)
 
-    public async Task DisposeAsync()
-    {
-        await _mongoContainer.DisposeAsync();
-    }
-}
+---
+
+## 📐 Patrones y Principios Aplicados
+
+### Patrones de Arquitectura
+- ✅ **Clean Architecture**: Separación clara de responsabilidades por capas
+- ✅ **Domain-Driven Design (DDD)**: El dominio como centro de la arquitectura
+- ✅ **Dependency Inversion Principle**: Dependencias apuntan hacia abstracciones
+- ✅ **Separation of Concerns**: Cada capa tiene una responsabilidad específica
+
+### Patrones de Diseño
+- ✅ **Repository Pattern**: Abstracción del acceso a datos
+- ✅ **Factory Pattern**: Método Create en Forecast
+- ✅ **Options Pattern**: Configuración fuertemente tipada
+- ✅ **Dependency Injection**: Inversión de control con .NET DI
+- ✅ **Service Layer Pattern**: Servicios de aplicación
+
+### Patrones de Persistencia
+- ✅ **Document Store Pattern**: MongoDB para almacenamiento NoSQL
+- ✅ **Singleton Pattern**: MongoClient compartido (recomendación oficial de MongoDB)
+
+### Principios SOLID
+- ✅ **Single Responsibility**: Cada clase tiene una responsabilidad
+- ✅ **Open/Closed**: Abierto para extensión, cerrado para modificación
+- ✅ **Liskov Substitution**: Las abstracciones son sustituibles
+- ✅ **Interface Segregation**: Interfaces específicas (IGeolocationService, IWeatherQueryService)
+- ✅ **Dependency Inversion**: Dependencia de abstracciones, no de implementaciones
+
+---
+
+## 🔮 Extensiones Futuras Planificadas
+
+### Corto Plazo
+- [ ] Tests unitarios completos
+- [ ] Tests de integración con Testcontainers
+- [ ] Logging estructurado con Serilog
+- [ ] Health checks para MongoDB y APIs externas
+- [ ] Cache en memoria para pronósticos recientes
+
+### Medio Plazo
+- [ ] Implementación de CQRS con handlers separados
+- [ ] Value Objects (PostalCode, Temperature, Coordinates)
+- [ ] Domain Events
+- [ ] Paginación de resultados
+- [ ] Búsqueda histórica de pronósticos
+
+### Largo Plazo
+- [ ] Integración con RabbitMQ y MassTransit para mensajería asíncrona
+- [ ] Implementación de Outbox Pattern para consistencia eventual
+- [ ] Cache distribuido con Redis
+- [ ] Implementación de Circuit Breaker con Polly
+- [ ] API de GraphQL además de REST
+- [ ] Autenticación y autorización con JWT
+- [ ] Rate limiting
+- [ ] Versionado de API
+
+---
+
+## 📚 Documentación Adicional
+
+- [MONGODB_CONFIG.md](../MONGODB_CONFIG.md) - Configuración detallada de MongoDB
+- [OPTIONS_PATTERN.md](../OPTIONS_PATTERN.md) - Documentación del patrón Options
+- [OPENCAGE_API_SETUP.md](OPENCAGE_API_SETUP.md) - Configuración de OpenCage API
+- [OPEN_METEO_SERVICE.md](OPEN_METEO_SERVICE.md) - Documentación de Open-Meteo
+- [README.md](../README.md) - README principal del proyecto
+
+---
+
+## 🛠️ Solución de Problemas Comunes
+
+### Error: "Unable to connect to MongoDB"
+```bash
+# Verificar que MongoDB está corriendo
+docker ps | grep mongodb
+
+# Ver logs de MongoDB
+docker logs mongodb
+
+# Reiniciar MongoDB
+./mongodb.sh restart
+```
+
+### Error: "MongoServerError: No host described in new configuration"
+Este error ocurre cuando el replica set está mal configurado. Solución:
+```bash
+# Detener y eliminar contenedor
+docker stop mongodb && docker rm mongodb
+
+# Eliminar volumen
+docker volume rm docker_mongodb_data
+
+# Iniciar nuevamente
+./mongodb.sh start
+```
+
+### Error: "OpenCage API Key is missing or invalid"
+- Verifica que la API Key esté en `appsettings.Development.json`
+- Asegúrate de que la key sea válida en https://opencagedata.com/dashboard
+- Revisa que no haya espacios extra o caracteres invisibles
+
+### Error de compilación
+```bash
+# Limpiar y recompilar
+dotnet clean
+dotnet restore
+dotnet build
+```
+
+### Puerto 27017 ya en uso
+```bash
+# Ver qué proceso usa el puerto
+sudo lsof -i :27017
+
+# O detener MongoDB local si está corriendo
+sudo systemctl stop mongod
 ```
 
 ---
 
-## Referencias
+## 👥 Contribuir
 
-- [Domain-Driven Design (Eric Evans)](https://www.domainlanguage.com/ddd/)
-- [Clean Architecture (Robert C. Martin)](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Microsoft - DDD in .NET](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/)
+Para contribuir al proyecto:
+1. Hacer fork del repositorio
+2. Crear una rama feature (`git checkout -b feature/NuevaFuncionalidad`)
+3. Hacer commit de los cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/NuevaFuncionalidad`)
+5. Crear un Pull Request
 
 ---
 
-**Fecha de creación**: 2025-12-23
+## 📝 Notas de Implementación
+
+### ¿Por qué NO se usa MediatR?
+Este proyecto implementa CQRS sin MediatR para mantener la simplicidad. Los servicios se inyectan directamente vía DI. Esto proporciona:
+- Mayor claridad en el flujo de código
+- Menos abstracciones y complejidad
+- Stack traces más simples para debugging
+- Menor curva de aprendizaje
+
+**Considerar MediatR** cuando el proyecto crezca y necesite:
+- Pipeline behaviors automáticos
+- Múltiples handlers por mensaje
+- Desacoplamiento extremo
+
+### ¿Por qué MongoDB y no SQL?
+- Esquema flexible para diferentes tipos de pronósticos
+- Excelente rendimiento en operaciones de lectura
+- Mapeo natural con objetos C# (documentos JSON)
+- Escalabilidad horizontal con sharding
+
+### ¿Por qué Open-Meteo?
+- Totalmente gratuito sin límites
+- No requiere API Key ni registro
+- Datos precisos basados en modelos meteorológicos profesionales
+- Alta disponibilidad (99.9% uptime)
+
+---
+
+**Última actualización**: 2025-12-26
+**Versión**: 1.0.0
+**Framework**: .NET 8
+**Licencia**: MIT
 
