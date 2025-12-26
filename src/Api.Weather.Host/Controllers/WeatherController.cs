@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Weather.Host.Resources;
+using Api.Weather.Host.ExceptionHandlers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Weather.Application.Commands;
@@ -39,21 +40,38 @@ public class WeatherController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(ForecastResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetForecast([FromBody] ForecastRequest request, CancellationToken cancellationToken)
     {
+        // Validar request
+        if (request == null)
+            throw new ArgumentNullException(nameof(request), "Request cannot be null");
 
         var command = new ForecastCommand() { Location = request.Location, Time = request.Time };
         var validationResult = this.validations.TrueForAll(x => x.IsValid(command).Result);
         
         if(!validationResult)
-            return BadRequest();
+            throw new ValidationException("Invalid forecast request. Please check location and time fields.");
 
         var locationInfo = await this.geolocationService.GetCoordinates(request.Location).ConfigureAwait(false);
+        
+        if (locationInfo == (null, null) || string.IsNullOrEmpty(locationInfo.Item1))
+            throw new NotFoundException($"Location '{request.Location}' not found. Please verify the address.");
+        
         var forecast = await this.weatherQueryService.GetForecastAsync(locationInfo, cancellationToken).ConfigureAwait(false);
         await forecastService.AddForecastAsync(request.Location, request.Time, forecast, cancellationToken).ConfigureAwait(false);
         
-        var response = new ForecastResponse() { Location = request.Location, Time = forecast.Time.ToString(CultureInfo.InvariantCulture), Temperature = forecast.Temperature.ToString(CultureInfo.InvariantCulture), Weather = forecast.WeatherDescription };
+        var response = new ForecastResponse() 
+        { 
+            Location = request.Location, 
+            Time = forecast.Time.ToString(CultureInfo.InvariantCulture), 
+            Temperature = forecast.Temperature.ToString(CultureInfo.InvariantCulture), 
+            Weather = forecast.WeatherDescription 
+        };
+        
         return Ok(response);
     }
 }
