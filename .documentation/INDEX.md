@@ -24,22 +24,8 @@
   - Ejemplos de integración
 
 ### 🗄️ Base de Datos
-- **[../MONGODB_CONFIG.md](../MONGODB_CONFIG.md)** - Configuración completa de MongoDB
-  - Instalación local y con Docker
-  - Configuración del proyecto
-  - Comandos útiles
-  - Solución de problemas
-
-### 🎯 Patrones de Diseño
-- **[../OPTIONS_PATTERN.md](../OPTIONS_PATTERN.md)** - Documentación del Options Pattern
-  - Implementación en el proyecto
-  - Ventajas del patrón
-  - Ejemplos de uso
-  - Extensiones futuras
-
-### 📝 Otros Recursos
-- **[../README.md](../README.md)** - README principal del proyecto (raíz)
-- **[../SETUP_SUMMARY.md](../SETUP_SUMMARY.md)** - Resumen de configuración de MongoDB
+- **Docker Compose**: `../.docker/docker-compose.yaml` - Configuración de MongoDB con replica set
+- **Variables de entorno**: `../.docker/.env` - Variables de configuración de MongoDB
 
 ---
 
@@ -50,7 +36,7 @@
 1. [README.md](README.md) → Sección "Descripción General"
 2. [README.md](README.md) → Sección "Guía de Configuración y Ejecución"
 3. [OPENCAGE_API_SETUP.md](OPENCAGE_API_SETUP.md) → Obtener API Key
-4. [../MONGODB_CONFIG.md](../MONGODB_CONFIG.md) → Configurar MongoDB
+4. [README.md](README.md) → Sección "MongoDB - Persistencia de Datos"
 5. [README.md](README.md) → Sección "Probar la API"
 
 ### 🏗️ Arquitecto de Software
@@ -59,15 +45,15 @@
 2. [README.md](README.md) → Sección "Descripción de Capas"
 3. [README.md](README.md) → Sección "Flujo de Dependencias"
 4. [README.md](README.md) → Sección "Patrones y Principios Aplicados"
-5. [../OPTIONS_PATTERN.md](../OPTIONS_PATTERN.md) → Patrón Options
+5. [README.md](README.md) → Sección "Configuración con Options Pattern"
 
 ### 🔧 DevOps / SRE
 **Consulta**:
-1. [../MONGODB_CONFIG.md](../MONGODB_CONFIG.md) → Instalación y configuración
+1. [README.md](README.md) → Sección "Configurar MongoDB"
 2. [README.md](README.md) → Sección "MongoDB - Persistencia de Datos"
 3. [README.md](README.md) → Sección "Solución de Problemas Comunes"
 4. Docker Compose: `../.docker/docker-compose.yaml`
-5. Script de gestión: `../mongodb.sh`
+5. Variables de entorno: `../.docker/.env`
 
 ### 🧪 QA / Tester
 **Revisa**:
@@ -85,19 +71,17 @@
 | README.md | ✅ Actualizado | 2025-12-26 | ~870 |
 | OPENCAGE_API_SETUP.md | ✅ Actualizado | 2025-12-23 | ~407 |
 | OPEN_METEO_SERVICE.md | ✅ Actualizado | 2025-12-23 | ~379 |
-| ../MONGODB_CONFIG.md | ✅ Actualizado | 2025-12-26 | ~214 |
-| ../OPTIONS_PATTERN.md | ✅ Actualizado | 2025-12-26 | ~180 |
-| ../README.md | ⚠️ Por sincronizar | - | - |
+| INDEX.md | ✅ Actualizado | 2025-12-26 | ~120 |
 
 ---
 
 ## 🔍 Búsqueda Rápida por Tema
 
 ### Configuración
-- **MongoDB**: [README.md](README.md#-mongodb---persistencia-de-datos) | [../MONGODB_CONFIG.md](../MONGODB_CONFIG.md)
-- **Options Pattern**: [README.md](README.md#configuración-con-options-pattern) | [../OPTIONS_PATTERN.md](../OPTIONS_PATTERN.md)
+- **MongoDB**: [README.md](README.md#-mongodb---persistencia-de-datos)
+- **Options Pattern**: [README.md](README.md#configuración-con-options-pattern)
 - **API Keys**: [OPENCAGE_API_SETUP.md](OPENCAGE_API_SETUP.md)
-- **Docker**: [../MONGODB_CONFIG.md](../MONGODB_CONFIG.md) | `../.docker/`
+- **Docker**: `../.docker/docker-compose.yaml` | `../.docker/.env`
 
 ### Arquitectura
 - **Estructura del Proyecto**: [README.md](README.md#-arquitectura-del-proyecto-actual)
@@ -116,9 +100,10 @@
 - **Troubleshooting**: [README.md](README.md#-solución-de-problemas-comunes)
 
 ### Base de Datos
-- **MongoDB Setup**: [../MONGODB_CONFIG.md](../MONGODB_CONFIG.md)
+- **MongoDB Setup**: [README.md](README.md#-configurar-mongodb)
 - **Comandos**: [README.md](README.md#comandos-útiles-de-mongodb)
 - **Estructura**: [README.md](README.md#estructura-de-la-base-de-datos)
+- **Docker Compose**: `../.docker/docker-compose.yaml`
 
 ---
 
@@ -151,7 +136,7 @@ Ver guía completa: [README.md](README.md#-guía-de-configuración-y-ejecución)
 ## 📞 Soporte
 
 - **Problemas comunes**: [README.md](README.md#-solución-de-problemas-comunes)
-- **MongoDB issues**: [../MONGODB_CONFIG.md](../MONGODB_CONFIG.md#solución-de-problemas)
+- **MongoDB**: [README.md](README.md#-mongodb---persistencia-de-datos)
 - **OpenCage API**: [OPENCAGE_API_SETUP.md](OPENCAGE_API_SETUP.md#verificación)
 
 ---

@@ -58,13 +58,13 @@ Api.Practice/
 │   │   ├── Persistence/
 │   │   │   ├── Repositories/
 │   │   │   │   └── ForecastRepository.cs # Implementación MongoDB
-│   │   │   ├── Models/
-│   │   │   │   └── ForecastEntity.cs     # Modelo BD (futuro)
-│   │   │   └── MongoDbContext.cs        # Contexto MongoDB
+│   │   │   └── Configurations/
+│   │   │       ├── DefaultGuidMap.cs     # Mapeo GUID para MongoDB
+│   │   │       └── ForecastMapping.cs    # Configuración de colección
 │   │   ├── Configuration/
 │   │   │   ├── MongoDbSettings.cs       # Settings (Options Pattern)
 │   │   │   └── ServiceCollectionExtensions.cs
-│   │   └── Messaging/                   # (futuro - RabbitMQ)
+│   │   └── Messaging/                   # (vacío - futuro RabbitMQ)
 │   │
 │   └── Api.Weather.Host/                # Capa de Presentación
 │       ├── Controllers/
@@ -72,7 +72,6 @@ Api.Practice/
 │       ├── Resources/
 │       │   ├── ForecastRequest.cs       # Request DTO
 │       │   └── ForecastResponse.cs      # Response DTO
-│       ├── Extensions/
 │       ├── Properties/
 │       │   └── launchSettings.json
 │       ├── appsettings.json
@@ -91,10 +90,7 @@ Api.Practice/
 │   ├── OPENCAGE_API_SETUP.md           # Setup OpenCage API
 │   └── OPEN_METEO_SERVICE.md           # Documentación Open-Meteo
 │
-├── mongodb.sh                           # Script gestión MongoDB
-├── MONGODB_CONFIG.md                    # Documentación MongoDB (raíz)
-├── OPTIONS_PATTERN.md                   # Documentación Options Pattern
-└── README.md                            # README principal (raíz)
+└── Api.Practice.sln                     # Archivo de solución
 ```
 
 ---
@@ -159,9 +155,11 @@ public class Forecast
 
 **Componentes principales**:
 
-1. **MongoDbContext**: Contexto para interactuar con MongoDB
-2. **ForecastRepository**: Implementación del repositorio usando MongoDB Driver
-3. **MongoDbSettings**: Configuración con **Options Pattern**
+1. **ForecastRepository**: Implementación del repositorio usando MongoDB Driver con Options Pattern
+2. **MongoDbSettings**: Configuración con **Options Pattern**
+3. **Configuraciones de MongoDB**:
+   - **ForecastMapping**: Configuración de la colección Forecast
+   - **DefaultGuidMap**: Mapeo de GUID para MongoDB
 
 **Patrón Options Implementado**:
 ```csharp
@@ -291,7 +289,7 @@ Api.Weather.Host → Weather.Application → Weather.Domain
 
 ### 2. Configurar MongoDB
 
-#### Opción A: Con Docker Compose (Recomendado)
+**Con Docker Compose**:
 ```bash
 # Ir a la carpeta .docker
 cd .docker
@@ -301,21 +299,12 @@ docker compose --profile infrastructure up -d
 
 # Verificar que está corriendo
 docker ps | grep mongodb
-```
 
-#### Opción B: Con el script helper
-```bash
-# Hacer ejecutable (primera vez)
-chmod +x mongodb.sh
+# Ver logs
+docker logs mongodb
 
-# Comandos disponibles
-./mongodb.sh start      # Iniciar MongoDB
-./mongodb.sh stop       # Detener MongoDB
-./mongodb.sh restart    # Reiniciar MongoDB
-./mongodb.sh logs       # Ver logs en tiempo real
-./mongodb.sh status     # Ver estado del contenedor
-./mongodb.sh shell      # Abrir MongoDB Shell
-./mongodb.sh clean      # Limpiar datos (con confirmación)
+# Detener MongoDB
+docker compose --profile infrastructure down
 ```
 
 ### 3. Configurar API Keys
@@ -450,8 +439,6 @@ public ForecastRepository(
 - ✅ Soporte para recarga en caliente (con IOptionsSnapshot)
 - ✅ Integración perfecta con DI
 
-Ver documentación completa: [OPTIONS_PATTERN.md](../OPTIONS_PATTERN.md)
-
 ### Estructura de la Base de Datos
 
 **Base de datos**: `WeatherDb`
@@ -488,19 +475,33 @@ db.Forecasts.find({ location: "Madrid, España" }).pretty()
 db.Forecasts.deleteMany({})
 ```
 
-### Gestión de MongoDB con Script
+### Gestión de MongoDB
 
 ```bash
-./mongodb.sh start     # Iniciar contenedor MongoDB
-./mongodb.sh stop      # Detener contenedor
-./mongodb.sh restart   # Reiniciar contenedor
-./mongodb.sh logs      # Ver logs en tiempo real
-./mongodb.sh status    # Ver estado y replica set
-./mongodb.sh shell     # Abrir MongoDB Shell interactivo
-./mongodb.sh clean     # Eliminar contenedor y datos
+# Iniciar MongoDB
+cd .docker
+docker compose --profile infrastructure up -d
+
+# Detener MongoDB
+docker compose --profile infrastructure down
+
+# Reiniciar MongoDB
+docker compose --profile infrastructure restart
+
+# Ver logs en tiempo real
+docker logs -f mongodb
+
+# Ver estado del contenedor
+docker ps -f name=mongodb
+
+# Abrir MongoDB Shell interactivo
+docker exec -it mongodb mongosh
+
+# Limpiar datos (eliminar contenedor y volúmenes)
+docker compose --profile infrastructure down -v
 ```
 
-Ver documentación completa de MongoDB: [MONGODB_CONFIG.md](../MONGODB_CONFIG.md)
+Ver documentación de Docker Compose: `.docker/docker-compose.yaml`
 
 ---
 
@@ -562,11 +563,9 @@ Ver documentación completa de MongoDB: [MONGODB_CONFIG.md](../MONGODB_CONFIG.md
 
 ## 📚 Documentación Adicional
 
-- [MONGODB_CONFIG.md](../MONGODB_CONFIG.md) - Configuración detallada de MongoDB
-- [OPTIONS_PATTERN.md](../OPTIONS_PATTERN.md) - Documentación del patrón Options
 - [OPENCAGE_API_SETUP.md](OPENCAGE_API_SETUP.md) - Configuración de OpenCage API
 - [OPEN_METEO_SERVICE.md](OPEN_METEO_SERVICE.md) - Documentación de Open-Meteo
-- [README.md](../README.md) - README principal del proyecto
+- `.docker/docker-compose.yaml` - Configuración de MongoDB con Docker Compose
 
 ---
 
@@ -581,7 +580,8 @@ docker ps | grep mongodb
 docker logs mongodb
 
 # Reiniciar MongoDB
-./mongodb.sh restart
+cd .docker
+docker compose --profile infrastructure restart
 ```
 
 ### Error: "MongoServerError: No host described in new configuration"
@@ -594,7 +594,8 @@ docker stop mongodb && docker rm mongodb
 docker volume rm docker_mongodb_data
 
 # Iniciar nuevamente
-./mongodb.sh start
+cd .docker
+docker compose --profile infrastructure up -d
 ```
 
 ### Error: "OpenCage API Key is missing or invalid"

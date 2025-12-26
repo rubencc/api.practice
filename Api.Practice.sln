@@ -20,8 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".documentation", ".document
 	ProjectSection(SolutionItems) = preProject
 		.documentation\OPENCAGE_API_SETUP.md = .documentation\OPENCAGE_API_SETUP.md
 		.documentation\OPEN_METEO_SERVICE.md = .documentation\OPEN_METEO_SERVICE.md
-		.documentation\README_ACTUALIZADO.md = .documentation\README_ACTUALIZADO.md
 		.documentation\INDEX.md = .documentation\INDEX.md
+		.documentation\README.md = .documentation\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Services", "1 - Services", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"
