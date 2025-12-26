@@ -5,6 +5,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AE329FA3-5CA3-403C-91AD-745E8B5D5D94}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docker", ".docker", "{FF785FF6-2D9D-4530-8766-8EE887B1FDC9}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\docker-compose.yaml = .docker\docker-compose.yaml
+		.docker\.env = .docker\.env
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".misc", ".misc", "{3973FFC0-5A20-49FB-BE0E-9E89F466367F}"
 EndProject

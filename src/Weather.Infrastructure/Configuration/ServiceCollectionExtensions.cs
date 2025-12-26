@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Weather.Domain.Repositories;
+using Weather.Infrastructure.Persistence.Configurations;
 using Weather.Infrastructure.Persistence.Repositories;
 
 namespace Weather.Infrastructure.Configuration;
@@ -14,6 +15,9 @@ public static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         // Configurar MongoDB
+        
+        DefaultGuidMap.InitializeMap();
+        ForecastMapping.InitializeMap();
         
         services.AddOptions<MongoDbSettings>()
             .ValidateDataAnnotations()

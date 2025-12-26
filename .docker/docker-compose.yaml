@@ -1,0 +1,45 @@
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo:${MONGO_VERSION:?err}
+    profiles: ["infrastructure"]
+    command: >
+      bash -c "
+        mongod --replSet rs-local --bind_ip_all --port 27017 --fork --logpath /var/log/mongodb.log &&
+        until mongosh --eval 'print(\"MongoDB está listo\")' > /dev/null 2>&1; do sleep 2; done &&
+        mongosh --eval '
+          try {
+            rs.status();
+            print(\"Replica set ya inicializado\");
+          } catch (e) {
+            rs.initiate({
+              _id: \"rs-local\",
+              members: [
+                { _id: 0, host: \"mongodb:27017\" }
+              ]
+            });
+            print(\"Replica set rs-local inicializado\");
+          }
+        ' &&
+        tail -f /var/log/mongodb.log
+      "
+    restart: ${RESTART_ON_FAILURE}
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    environment:
+      MONGO_INITDB_DATABASE: COR_WriteDb
+    ports:
+      - ${MONGO_PORT:?err}:${MONGO_PORT:?err}
+    networks:
+      - localnet
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+
+networks:
+  localnet:
+    driver: bridge
+  infrastructure_localnet:
+    external: true
