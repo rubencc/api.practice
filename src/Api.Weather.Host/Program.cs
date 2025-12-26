@@ -1,9 +1,10 @@
 using Weather.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Weather.Application.Configuration;
 using Api.Weather.Host.ExceptionHandlers;
+using Api.Weather.Host.Configuration;
+using Asp.Versioning.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +13,17 @@ builder.Services
     .AddEndpointsApiExplorer()
     .AddControllers();
 
+// Configurar API Versioning
+builder.Services.AddApiVersioningConfiguration();
+
 // Configurar ProblemDetails y Exception Handler
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
+// Configurar Swagger con versionado
+builder.Services.AddSwaggerConfiguration();
+
 builder.Services
-    .AddSwaggerGen()
     .AddApplicationDependencies()
     .AddInfrastructureDependencies(builder.Configuration);
 
@@ -27,8 +33,21 @@ var app = builder.Build();
 app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
+
+// Configurar Swagger UI con múltiples versiones
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+    
+    foreach (var description in provider.ApiVersionDescriptions)
+    {
+        options.SwaggerEndpoint(
+            $"/swagger/{description.GroupName}/swagger.json",
+            description.GroupName.ToUpperInvariant());
+    }
+});
+
 app.UseRouting();
 app.MapControllers();
 

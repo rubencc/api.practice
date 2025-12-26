@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Api.Weather.Host.Resources;
 using Api.Weather.Host.ExceptionHandlers;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Weather.Application.Commands;
@@ -14,7 +15,8 @@ using Weather.Application.Services;
 
 namespace Api.Weather.Host.Controllers;
 
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
 public class WeatherController : ControllerBase
 {
