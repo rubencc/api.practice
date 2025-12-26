@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
     {
         // Registrar validaciones
         services.AddTransient<IValidation<ForecastCommand>, AddressValidation>();
-        services.AddTransient<IValidation<ForecastCommand>, DateValidation>();
+        services.AddTransient<IValidation<ForecastCommand>, DateTimeOffsetValidation>();
 
         services.AddTransient<IGeolocationService, GeolocationService>();
         services.AddTransient<IWeatherQueryService, WeatherQueryService>();

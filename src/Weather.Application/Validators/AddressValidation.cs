@@ -7,6 +7,6 @@ public class AddressValidation : IValidation<ForecastCommand>
 {
     public Task<bool> IsValid(ForecastCommand command)
     {
-        return Task.FromResult(!string.IsNullOrWhiteSpace(command.Address));
+        return Task.FromResult(!string.IsNullOrWhiteSpace(command.Location));
     }
 }

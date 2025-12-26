@@ -4,6 +4,6 @@ namespace Api.Weather.Host.Resources;
 
 public class ForecastRequest
 {
-    public string Address { get; set; }
-    public DateOnly Time { get; set; }
+    public string Location { get; set; }
+    public DateTimeOffset Time { get; set; } = DateTimeOffset.UtcNow;
 }

@@ -1,5 +1,6 @@
 using Weather.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Weather.Application.Configuration;
 
@@ -10,7 +11,7 @@ builder.Services
 builder.Services
     .AddSwaggerGen()
     .AddApplicationDependencies()
-    .AddInfrastructureDependencies();
+    .AddInfrastructureDependencies(builder.Configuration);
 
 
 var app = builder.Build();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,22 +37,23 @@ public class WeatherController : ControllerBase
         this.forecastService = forecastService ?? throw new ArgumentNullException(nameof(forecastService));
     }
 
-    [HttpGet]
+    [HttpPost]
     [ProducesResponseType(typeof(ForecastResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status422UnprocessableEntity)]
-    public async Task<IActionResult> GetForecast([FromQuery] ForecastRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetForecast([FromBody] ForecastRequest request, CancellationToken cancellationToken)
     {
 
-        var command = new ForecastCommand() { Address = request.Address, Time = request.Time };
+        var command = new ForecastCommand() { Location = request.Location, Time = request.Time };
         var validationResult = this.validations.TrueForAll(x => x.IsValid(command).Result);
         
         if(!validationResult)
             return BadRequest();
 
-        var locationInfo = await this.geolocationService.GetCoordinates(request.Address).ConfigureAwait(false);
+        var locationInfo = await this.geolocationService.GetCoordinates(request.Location).ConfigureAwait(false);
         var forecast = await this.weatherQueryService.GetForecastAsync(locationInfo, cancellationToken).ConfigureAwait(false);
+        await forecastService.AddForecastAsync(request.Location, request.Time, forecast, cancellationToken).ConfigureAwait(false);
         
-        //var response = new ForecastResponse() { Address = forecast.PostalCode, Time = forecast.Time, Temperature = forecast.Temperature, Weather = forecast.Weather };
-        return Ok();
+        var response = new ForecastResponse() { Location = request.Location, Time = forecast.Time.ToString(CultureInfo.InvariantCulture), Temperature = forecast.Temperature.ToString(CultureInfo.InvariantCulture), Weather = forecast.WeatherDescription };
+        return Ok(response);
     }
 }

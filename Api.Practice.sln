@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".documentation", ".document
 		.documentation\OPEN_METEO_SERVICE.md = .documentation\OPEN_METEO_SERVICE.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - API", "1 - API", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Services", "1 - Services", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{2FC7A0F0-0094-49F4-81A0-A013D542F5F9}"
 EndProject
