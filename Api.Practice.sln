@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".documentation", ".document
 		.documentation\README.md = .documentation\README.md
 		.documentation\PROBLEMDETAILS_IMPLEMENTATION.md = .documentation\PROBLEMDETAILS_IMPLEMENTATION.md
 		.documentation\API_VERSIONING.md = .documentation\API_VERSIONING.md
+		.documentation\DDD_ANALYSIS.md = .documentation\DDD_ANALYSIS.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Services", "1 - Services", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"

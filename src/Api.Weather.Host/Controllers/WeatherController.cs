@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Weather.Host.Resources;
 using Api.Weather.Host.ExceptionHandlers;
 using Asp.Versioning;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Weather.Application.Commands;
 using Weather.Application.Interfaces;
 using Weather.Application.Services;
+using Weather.Domain.ValueObjects;
+using ValidationException = Api.Weather.Host.ExceptionHandlers.ValidationException;
 
 namespace Api.Weather.Host.Controllers;
 
@@ -20,24 +20,17 @@ namespace Api.Weather.Host.Controllers;
 [ApiController]
 public class WeatherController : ControllerBase
 {
-    private readonly List<IValidation<ForecastCommand>> validations;
-    private readonly IGeolocationService geolocationService;
-    private readonly IWeatherQueryService weatherQueryService;
-    private readonly ForecastService forecastService;
+    private readonly IValidator<ForecastRequest> _validator;
+    private readonly IGeolocationService _geolocationService;
+    private readonly IWeatherQueryService _weatherQueryService;
+    private readonly ForecastService _forecastService;
 
-    public WeatherController(IEnumerable<IValidation<ForecastCommand>> validations, IGeolocationService geolocationService, IWeatherQueryService weatherQueryService, ForecastService forecastService)
+    public WeatherController(IValidator<ForecastRequest> validator, IGeolocationService geolocationService, IWeatherQueryService weatherQueryService, ForecastService forecastService)
     {
-        if (validations == null)
-            throw new ArgumentNullException(nameof(validations));
-        
-        this.validations = validations.ToList();
-        
-        if (this.validations.Count == 0)
-            throw new InvalidOperationException("At least one validation must be registered in the IoC container.");
-        
-        this.geolocationService = geolocationService ?? throw new ArgumentNullException(nameof(geolocationService));
-        this.weatherQueryService = weatherQueryService ?? throw new ArgumentNullException(nameof(weatherQueryService));
-        this.forecastService = forecastService ?? throw new ArgumentNullException(nameof(forecastService));
+        this._validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        this._geolocationService = geolocationService ?? throw new ArgumentNullException(nameof(geolocationService));
+        this._weatherQueryService = weatherQueryService ?? throw new ArgumentNullException(nameof(weatherQueryService));
+        this._forecastService = forecastService ?? throw new ArgumentNullException(nameof(forecastService));
     }
 
     [HttpPost]
@@ -48,29 +41,24 @@ public class WeatherController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetForecast([FromBody] ForecastRequest request, CancellationToken cancellationToken)
     {
-        // Validar request
-        if (request == null)
-            throw new ArgumentNullException(nameof(request), "Request cannot be null");
-
-        var command = new ForecastCommand() { Location = request.Location, Time = request.Time };
-        var validationResult = this.validations.TrueForAll(x => x.IsValid(command).Result);
+        var validationResult = await _validator.ValidateAsync(request, cancellationToken).ConfigureAwait(false);
         
-        if(!validationResult)
-            throw new ValidationException("Invalid forecast request. Please check location and time fields.");
+        if(!validationResult.IsValid)
+            throw new ValidationException("Invalid forecast request. Please check location and time fields.", validationResult.Errors);
 
-        var locationInfo = await this.geolocationService.GetCoordinates(request.Location).ConfigureAwait(false);
+        Location locationInfo = await this._geolocationService.GetCoordinates(request.Location).ConfigureAwait(false);
         
-        if (locationInfo == (null, null) || string.IsNullOrEmpty(locationInfo.Item1))
+        if (locationInfo == null)
             throw new NotFoundException($"Location '{request.Location}' not found. Please verify the address.");
         
-        var forecast = await this.weatherQueryService.GetForecastAsync(locationInfo, cancellationToken).ConfigureAwait(false);
-        await forecastService.AddForecastAsync(request.Location, request.Time, forecast, cancellationToken).ConfigureAwait(false);
+        var forecast = await this._weatherQueryService.GetForecastAsync(locationInfo, cancellationToken).ConfigureAwait(false);
+        await _forecastService.AddForecastAsync(request.Location, request.Time, forecast, cancellationToken).ConfigureAwait(false);
         
         var response = new ForecastResponse() 
         { 
             Location = request.Location, 
             Time = forecast.Time.ToString(CultureInfo.InvariantCulture), 
-            Temperature = forecast.Temperature.ToString(CultureInfo.InvariantCulture), 
+            Temperature = forecast.Temperature.ToString(), 
             Weather = forecast.WeatherDescription 
         };
         

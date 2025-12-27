@@ -89,7 +89,10 @@ public class GlobalExceptionHandler : IExceptionHandler
             Instance = context.Request.Path,
             Extensions =
             {
-                ["traceId"] = traceId
+                ["traceId"] = traceId,
+                ["errors"] = exception.Data is ValidationException validationEx
+                    ? validationEx.Errors
+                    : null
             }
         };
     }

@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Weather.Application.Interfaces;
+using Weather.Domain.ValueObjects;
 
 namespace Weather.Application.Services;
 
@@ -18,7 +19,7 @@ public class GeolocationService : IGeolocationService
         _apiKey = configuration["OpenCage:ApiKey"] ?? throw new InvalidOperationException("OpenCage API Key no configurada");
     }
 
-    public async Task<(string lat, string logn)>  GetCoordinates(string address)
+    public async Task<Location>  GetCoordinates(string address)
     {
         // Documentación: https://opencagedata.com/api
         
@@ -52,7 +53,12 @@ public class GeolocationService : IGeolocationService
             }
 
             var location = geocodingResponse.Results[0].Geometry;
-            return (location.Lat.ToString(CultureInfo.InvariantCulture), location.Lng.ToString(CultureInfo.InvariantCulture));
+            
+            Location result = Location.Create(address,
+                location.Lat,
+                location.Lng);
+            
+            return result;
         }
         catch (Exception ex) when (ex is not HttpRequestException && ex is not InvalidOperationException)
         {

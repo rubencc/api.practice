@@ -5,6 +5,7 @@ using Weather.Application.Configuration;
 using Api.Weather.Host.ExceptionHandlers;
 using Api.Weather.Host.Configuration;
 using Asp.Versioning.ApiExplorer;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,9 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 // Configurar Swagger con versionado
 builder.Services.AddSwaggerConfiguration();
+
+//FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services
     .AddApplicationDependencies()

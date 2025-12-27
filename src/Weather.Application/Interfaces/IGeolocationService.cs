@@ -1,6 +1,8 @@
+using Weather.Domain.ValueObjects;
+
 namespace Weather.Application.Interfaces;
 
 public interface IGeolocationService: IDisposable
 {
-    public Task<(string lat, string logn)> GetCoordinates(string address);
+    public Task<Location> GetCoordinates(string address);
 }

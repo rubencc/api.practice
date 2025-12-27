@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Weather.Application.DTOs;
 using Weather.Application.Interfaces;
+using Weather.Domain.ValueObjects;
 
 namespace Weather.Application.Services;
 
@@ -16,21 +17,21 @@ public class WeatherQueryService : IWeatherQueryService
     }
 
     public async Task<ForecastDto> GetForecastAsync(
-        (string latitude, string longitude) info, 
+        Location location, 
         CancellationToken cancellationToken = default)
     {
         try
         {
             // Open-Meteo API: https://open-meteo.com/en/docs
             // Parámetros: current_weather=true para clima actual
-            var url = $"{OpenMeteoBaseUrl}?latitude={info.latitude}&longitude={info.longitude}&current_weather=true&timezone=auto";
+            var url = $"{OpenMeteoBaseUrl}?latitude={location.Latitude}&longitude={location.Longitude}&current_weather=true&timezone=auto";
             
             var response = await _httpClient.GetAsync(url, cancellationToken);
             
             if (!response.IsSuccessStatusCode)
             {
                 throw new HttpRequestException(
-                    $"Error al obtener el clima para coordenadas ({info.latitude}, {info.longitude}). Status: {response.StatusCode}");
+                    $"Error al obtener el clima para coordenadas ({location.Latitude}, {location.Longitude}). Status: {response.StatusCode}");
             }
 
             var content = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -39,15 +40,14 @@ public class WeatherQueryService : IWeatherQueryService
             if (weatherResponse?.CurrentWeather == null)
             {
                 throw new InvalidOperationException(
-                    $"No se encontró información del clima para las coordenadas ({info.latitude}, {info.longitude})");
+                    $"No se encontró información del clima para las coordenadas ({location.Latitude}, {location.Longitude})");
             }
 
             return new ForecastDto
             {
-                Latitude = info.latitude,
-                Longitude = info.longitude,
+                Location = location,
                 Time = DateTime.Parse(weatherResponse.CurrentWeather.Time),
-                Temperature = weatherResponse.CurrentWeather.Temperature,
+                Temperature = Temperature.Create(weatherResponse.CurrentWeather.Temperature, "C"),
                 WindSpeed = weatherResponse.CurrentWeather.WindSpeed,
                 WindDirection = weatherResponse.CurrentWeather.WindDirection,
                 WeatherCode = weatherResponse.CurrentWeather.WeatherCode,

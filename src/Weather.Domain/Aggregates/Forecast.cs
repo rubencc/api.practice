@@ -1,22 +1,26 @@
-﻿namespace Weather.Domain.Aggregates;
+﻿using Weather.Domain.ValueObjects;
+
+namespace Weather.Domain.Aggregates;
 
 public class Forecast
 {
-    internal Forecast(string location, string temperature, string description, DateTimeOffset time)
+    internal Forecast(Location location, Temperature temperature, string description, DateTimeOffset time)
     {
         Location = location;
         Temperature = temperature;
         Description = description;
         Time = time;
+        Id = Guid.NewGuid();
     }
     
-    public string Location { get; init; }
+    public Guid Id { get; init; }
+    public Location Location { get; init; }
     public DateTimeOffset Time { get; init; }
-    public string Temperature { get; init; }
+    public Temperature Temperature { get; init; }
     public string Description { get; init; }
     
-    public static Forecast Create (string address, DateTimeOffset time, string temperature, string description)
+    public static Forecast Create (Location location, DateTimeOffset time, Temperature temperature, string description)
     {
-        return new Forecast(address, temperature, description, time);
+        return new Forecast(location, temperature, description, time);
     }
 }

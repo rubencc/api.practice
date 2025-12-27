@@ -16,7 +16,7 @@ public class ForecastService
 
     public Task<bool> AddForecastAsync(string location, DateTimeOffset time, ForecastDto dto, CancellationToken cancellationToken = default)
     {
-        var forecast = Forecast.Create(location, time, dto.Temperature.ToString(CultureInfo.InvariantCulture), dto.WeatherDescription);
+        var forecast = Forecast.Create(dto.Location, time, dto.Temperature, dto.WeatherDescription);
         return repository.AddForecastAsync(forecast, cancellationToken);
     }
 }
