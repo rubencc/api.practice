@@ -56,7 +56,7 @@ public class WeatherController : ControllerBase
         
         var response = new ForecastResponse() 
         { 
-            Location = request.Location, 
+            Location = forecast.Location.Address, 
             Time = forecast.Time.ToString(CultureInfo.InvariantCulture), 
             Temperature = forecast.Temperature.ToString(), 
             Weather = forecast.WeatherDescription 

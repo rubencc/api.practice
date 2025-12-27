@@ -6,6 +6,7 @@ using Api.Weather.Host.ExceptionHandlers;
 using Api.Weather.Host.Configuration;
 using Asp.Versioning.ApiExplorer;
 using FluentValidation;
+using Weather.Infrastructure.Opentelemetry.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddEndpointsApiExplorer()
     .AddControllers();
+
+// Configurar OpenTelemetry
+builder.Services.AddOpenTelemetryConfiguration(builder.Configuration);
 
 // Configurar API Versioning
 builder.Services.AddApiVersioningConfiguration();

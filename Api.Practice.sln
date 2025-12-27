@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".documentation", ".document
 		.documentation\PROBLEMDETAILS_IMPLEMENTATION.md = .documentation\PROBLEMDETAILS_IMPLEMENTATION.md
 		.documentation\API_VERSIONING.md = .documentation\API_VERSIONING.md
 		.documentation\DDD_ANALYSIS.md = .documentation\DDD_ANALYSIS.md
+		.documentation\OPENTELEMETRY_CONFIGURATION.md = .documentation\OPENTELEMETRY_CONFIGURATION.md
+		.documentation\OPENTELEMETRY_QUICKSTART.md = .documentation\OPENTELEMETRY_QUICKSTART.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Services", "1 - Services", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"
@@ -77,6 +79,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tempo", "tempo", "{4D42929D
 		.docker\monitoring\tempo\tempo.yaml = .docker\monitoring\tempo\tempo.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Infrastructure.Opentelemetry", "src\Weather.Infrastructure.Opentelemetry\Weather.Infrastructure.Opentelemetry.csproj", "{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +107,10 @@ Global
 		{959B7748-72AA-4383-9169-AF8F3C89CDFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{959B7748-72AA-4383-9169-AF8F3C89CDFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{959B7748-72AA-4383-9169-AF8F3C89CDFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B27F6680-4527-48B6-B011-2EE7456D79BE} = {AE329FA3-5CA3-403C-91AD-745E8B5D5D94}
@@ -122,5 +130,6 @@ Global
 		{55D63778-C534-49B0-9DCB-84256D64B8EE} = {90499172-C6FF-4062-9408-DA6274BEAA39}
 		{321CD0A6-FFC6-40D8-AC91-913051C46977} = {90499172-C6FF-4062-9408-DA6274BEAA39}
 		{4D42929D-9FA2-4035-B21A-80FE59593AEB} = {90499172-C6FF-4062-9408-DA6274BEAA39}
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2} = {9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847}
 	EndGlobalSection
 EndGlobal

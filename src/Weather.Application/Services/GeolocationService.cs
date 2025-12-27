@@ -54,7 +54,7 @@ public class GeolocationService : IGeolocationService
 
             var location = geocodingResponse.Results[0].Geometry;
             
-            Location result = Location.Create(address,
+            Location result = Location.Create(geocodingResponse.Results[0].Formatted,
                 location.Lat,
                 location.Lng);
             

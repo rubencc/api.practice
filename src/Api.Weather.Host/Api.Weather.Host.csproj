@@ -8,6 +8,7 @@
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Http" Version="8.1.0" />
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.1" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.1" />
@@ -19,6 +20,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Weather.Application\Weather.Application.csproj" />
       <ProjectReference Include="..\Weather.Infrastructure\Weather.Infrastructure.csproj" />
+      <ProjectReference Include="..\Weather.Infrastructure.Opentelemetry\Weather.Infrastructure.Opentelemetry.csproj" />
     </ItemGroup>
 
 </Project>

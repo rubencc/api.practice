@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Weather.Application.DTOs;
@@ -24,7 +25,7 @@ public class WeatherQueryService : IWeatherQueryService
         {
             // Open-Meteo API: https://open-meteo.com/en/docs
             // Parámetros: current_weather=true para clima actual
-            var url = $"{OpenMeteoBaseUrl}?latitude={location.Latitude}&longitude={location.Longitude}&current_weather=true&timezone=auto";
+            var url = $"{OpenMeteoBaseUrl}?latitude={location.LatitudeValue}&longitude={location.LongitudeValue}&current_weather=true&timezone=auto";
             
             var response = await _httpClient.GetAsync(url, cancellationToken);
             

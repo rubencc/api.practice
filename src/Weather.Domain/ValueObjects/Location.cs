@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Weather.Domain.ValueObjects;
 
 public class Location : IEquatable<Location>
@@ -9,9 +11,12 @@ public class Location : IEquatable<Location>
         Longitude = lon;
     }
     
-    public string Address { get; init; }
+    public string Address { get; init; } 
     public double? Latitude { get; init;}
     public double? Longitude { get; init;}
+    
+    public string LatitudeValue => Latitude?.ToString(CultureInfo.InvariantCulture) ?? throw new InvalidOperationException("Latitude is not set.");
+    public string LongitudeValue => Longitude?.ToString(CultureInfo.InvariantCulture) ?? throw new InvalidOperationException("Longitude is not set.");
 
     public static Location Create(string address, double lat, double lon)
     {

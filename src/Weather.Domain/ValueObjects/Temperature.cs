@@ -2,14 +2,14 @@ namespace Weather.Domain.ValueObjects;
 
 public class Temperature : IEquatable<Temperature>
 {
-    private Temperature(double value, string unit)
+    internal Temperature(double value, string unit)
     {
         Value = value;
         Unit = unit.ToUpperInvariant();
     }
 
-    public double Value { get; }
-    public string Unit { get; } // "C", "F", "K"
+    public double Value { get; init;}
+    public string Unit { get; init;} // "C", "F", "K"
 
     public static Temperature Create(double value, string unit)
     {
