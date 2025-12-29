@@ -72,10 +72,13 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./monitoring/tempo/tempo.yaml:/etc/tempo.yaml
+    tmpfs:
+      - /tmp/tempo:mode=1777
     ports:
       - 3200:3200  # tempo
-      - 4007:4317  # otlp grpc
-      - 4008:4318  # otlp http
+      - 9095:9095  # tempo grpc
+      - 4317       # otlp grpc (no expuesto externamente para evitar conflicto con otel-collector)
+      - 4318       # otlp http (no expuesto externamente para evitar conflicto con otel-collector)
     networks:
       - localnet
 
@@ -115,6 +118,8 @@ services:
 volumes:
   mongodb_data:
   mongodb_config:
+  tempo_data:
+  otelcollector_log:
 
 networks:
   localnet:

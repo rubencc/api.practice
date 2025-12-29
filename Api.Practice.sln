@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docker", ".docker", "{FF78
 	ProjectSection(SolutionItems) = preProject
 		.docker\docker-compose.yaml = .docker\docker-compose.yaml
 		.docker\.env = .docker\.env
+		.docker\restart-monitoring.sh = .docker\restart-monitoring.sh
+		.docker\fix-monitoring.sh = .docker\fix-monitoring.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".misc", ".misc", "{3973FFC0-5A20-49FB-BE0E-9E89F466367F}"
@@ -27,6 +29,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".documentation", ".document
 		.documentation\DDD_ANALYSIS.md = .documentation\DDD_ANALYSIS.md
 		.documentation\OPENTELEMETRY_CONFIGURATION.md = .documentation\OPENTELEMETRY_CONFIGURATION.md
 		.documentation\OPENTELEMETRY_QUICKSTART.md = .documentation\OPENTELEMETRY_QUICKSTART.md
+		.documentation\TEMPO_TROUBLESHOOTING.md = .documentation\TEMPO_TROUBLESHOOTING.md
+		.documentation\OPENTELEMETRY_CONFIG_ANALYSIS.md = .documentation\OPENTELEMETRY_CONFIG_ANALYSIS.md
+		.documentation\TRACES_FIX.md = .documentation\TRACES_FIX.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Services", "1 - Services", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"

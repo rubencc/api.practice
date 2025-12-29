@@ -37,6 +37,12 @@
   - Mejores prácticas
   - Ejemplos avanzados
 
+- **[TEMPO_TROUBLESHOOTING.md](TEMPO_TROUBLESHOOTING.md)** - Solución de problemas con Tempo
+  - Error "empty ring" en consultas TraceQL
+  - Configuración del metrics generator
+  - Verificación de servicios
+  - Scripts de reinicio
+
 ### 🏛️ Arquitectura y Diseño
 - **[DDD_ANALYSIS.md](DDD_ANALYSIS.md)** - Análisis de Domain-Driven Design
   - Estado actual del proyecto (57.8% adherencia a DDD)
@@ -106,10 +112,11 @@
 | OPEN_METEO_SERVICE.md | ✅ Actualizado | 2025-12-23 | ~379 |
 | OPENTELEMETRY_QUICKSTART.md | ✅ Nuevo | 2025-12-27 | ~200 |
 | OPENTELEMETRY_CONFIGURATION.md | ✅ Nuevo | 2025-12-27 | ~550 |
+| TEMPO_TROUBLESHOOTING.md | ✅ Nuevo | 2025-12-29 | ~225 |
 | DDD_ANALYSIS.md | ✅ Actualizado | 2025-12-27 | ~1,784 |
 | PROBLEMDETAILS_IMPLEMENTATION.md | ✅ Actualizado | 2025-12-26 | ~250 |
 | API_VERSIONING.md | ✅ Actualizado | 2025-12-26 | ~180 |
-| INDEX.md | ✅ Actualizado | 2025-12-27 | ~200 |
+| INDEX.md | ✅ Actualizado | 2025-12-29 | ~220 |
 
 ---
 
@@ -128,6 +135,7 @@
 - **Trazas Distribuidas**: [OPENTELEMETRY_CONFIGURATION.md](OPENTELEMETRY_CONFIGURATION.md#-uso-avanzado-trazas-personalizadas)
 - **Métricas**: [OPENTELEMETRY_CONFIGURATION.md](OPENTELEMETRY_CONFIGURATION.md#-métricas-disponibles)
 - **Grafana Stack**: [OPENTELEMETRY_QUICKSTART.md](OPENTELEMETRY_QUICKSTART.md#-acceso-rápido-a-los-servicios)
+- **Tempo Troubleshooting**: [TEMPO_TROUBLESHOOTING.md](TEMPO_TROUBLESHOOTING.md)
 
 ### Arquitectura
 - **Estructura del Proyecto**: [README.md](README.md#-arquitectura-del-proyecto-actual)
@@ -209,6 +217,6 @@ Ver guías completas:
 
 ---
 
-**Última actualización**: 2025-12-27  
+**Última actualización**: 2025-12-29  
 **Mantenedor**: Equipo Weather API
 

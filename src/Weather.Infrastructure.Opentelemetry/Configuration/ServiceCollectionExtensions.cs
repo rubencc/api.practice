@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
     {
         
         services.AddOptions<OpenTelemetryOptions>()
-            .Bind(configuration)
+            .Bind(configuration.GetSection("OpenTelemetry"))
             .Configure(options =>
             {
                 var assembly = Assembly.GetEntryAssembly()!;
@@ -26,8 +26,6 @@ public static class ServiceCollectionExtensions
                 options.ServiceName = entryAssemblyName.Name!;
                 options.ServiceVersion = entryAssemblyName.Version!.ToString();
                 options.ServiceNamespace = assembly.EntryPoint?.DeclaringType?.Namespace!;
-                options.OtlpEndpoint = configuration
-                    .GetValue<string>("OpenTelemetry:OtlpEndpoint");
             })
             .ValidateDataAnnotations();
         
@@ -102,6 +100,7 @@ public static class ServiceCollectionExtensions
                     tracerProviderBuilder.AddOtlpExporter(otlpOptions =>
                     {
                         otlpOptions.Endpoint = new Uri(options.OtlpEndpoint);
+                        otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     });
                 }
             })
@@ -134,6 +133,7 @@ public static class ServiceCollectionExtensions
                     meterProviderBuilder.AddOtlpExporter(otlpOptions =>
                     {
                         otlpOptions.Endpoint = new Uri(options.OtlpEndpoint);
+                        otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     });
                 }
             });
