@@ -1,8 +1,8 @@
 services:
   mongodb:
-    container_name: mongodb
+    container_name: api_mongodb
     image: mongo:${MONGO_VERSION:?err}
-    profiles: ["infrastructure"]
+    profiles: ["api-infrastructure"]
     command: >
       bash -c "
         mongod --replSet rs-local --bind_ip_all --port 27017 --fork --logpath /var/log/mongodb.log &&
@@ -35,9 +35,9 @@ services:
       - localnet
   
   otel-collector:
-    container_name: otel-collector
+    container_name: api_otel-collector
     image: otel/opentelemetry-collector-contrib:${OTELCOLLECTOR_VERSION}
-    profiles: [ "infrastructure-monitoring" ]
+    profiles: [ "api-infrastructure-monitoring" ]
     command: [ "--config=/etc/otel-collector-config.yaml" ]
     restart: ${RESTART_ON_FAILURE}
     volumes:
@@ -52,9 +52,9 @@ services:
       - localnet
 
   prometheus:
-    container_name: prometheus
+    container_name: api_prometheus
     image: prom/prometheus:${PROMETHEUS_VERSION}
-    profiles: [ "infrastructure-monitoring" ]
+    profiles: [ "api-infrastructure-monitoring" ]
     restart: ${RESTART_ON_FAILURE}
     volumes:
       - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
@@ -64,9 +64,9 @@ services:
       - localnet
 
   tempo:
-    container_name: tempo
+    container_name: api_tempo
     image: grafana/tempo:${TEMPO_VERSION}
-    profiles: [ "infrastructure-monitoring" ]
+    profiles: [ "api-infrastructure-monitoring" ]
     command: [ "-config.file=/etc/tempo.yaml" ]
     restart: ${RESTART_ON_FAILURE}
     volumes:
@@ -83,9 +83,9 @@ services:
       - localnet
 
   loki:
-    container_name: loki
+    container_name: api_loki
     image: grafana/loki:${LOKI_VERSION}
-    profiles: [ "infrastructure-monitoring" ]
+    profiles: [ "api-infrastructure-monitoring" ]
     command: -config.file=/etc/loki/local-config.yaml
     restart: ${RESTART_ON_FAILURE}
     volumes:
@@ -97,9 +97,9 @@ services:
       - localnet
 
   grafana:
-    container_name: grafana
+    container_name: api_grafana
     image: grafana/grafana:${GRAFANA_VERSION}
-    profiles: [ "infrastructure-monitoring" ]
+    profiles: [ "api-infrastructure-monitoring" ]
     restart: ${RESTART_ON_FAILURE}
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true

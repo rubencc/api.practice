@@ -100,7 +100,6 @@ public static class ServiceCollectionExtensions
                     tracerProviderBuilder.AddOtlpExporter(otlpOptions =>
                     {
                         otlpOptions.Endpoint = new Uri(options.OtlpEndpoint);
-                        otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                     });
                 }
             })
