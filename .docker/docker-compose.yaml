@@ -34,6 +34,20 @@ services:
     networks:
       - localnet
   
+  redis:
+    container_name: api-redis
+    image: redis:${REDIS_VERSION:?err}
+    profiles: ["api-infrastructure"]
+    restart: ${RESTART_ON_FAILURE}
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - 6379:6379
+    networks:
+      - localnet
+  
   otel-collector:
     container_name: api_otel-collector
     image: otel/opentelemetry-collector-contrib:${OTELCOLLECTOR_VERSION}

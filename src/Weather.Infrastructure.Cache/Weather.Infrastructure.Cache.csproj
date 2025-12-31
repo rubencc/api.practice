@@ -7,13 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="DomainServices\" />
-      <Folder Include="Entities\" />
-      <Folder Include="Exceptions\" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <InternalsVisibleTo Include="Weather.Infrastructure.Caching" />
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.1" />
+      <PackageReference Include="StackExchange.Redis" Version="2.10.1" />
     </ItemGroup>
 
 </Project>

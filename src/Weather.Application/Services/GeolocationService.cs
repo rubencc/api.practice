@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Weather.Application.Interfaces;
 using Weather.Domain.ValueObjects;
+using Weather.Infrastructure.Cache.Services;
 
 namespace Weather.Application.Services;
 
@@ -12,16 +13,28 @@ public class GeolocationService : IGeolocationService
     private readonly HttpClient _httpClient;
     private readonly string _apiKey;
     private const string OpenCageBaseUrl = "https://api.opencagedata.com/geocode/v1/json";
+    private readonly ICacheService _cacheService;
+    private const string CacheKeyPrefix = "WeatherApi:Location";
 
-    public GeolocationService(HttpClient httpClient, IConfiguration configuration)
+    public GeolocationService(HttpClient httpClient, IConfiguration configuration, ICacheService cacheService)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
         _apiKey = configuration["OpenCage:ApiKey"] ?? throw new InvalidOperationException("OpenCage API Key no configurada");
     }
 
     public async Task<Location>  GetCoordinates(string address)
     {
         // Documentación: https://opencagedata.com/api
+        
+        
+        // Verificar caché primero
+        var cacheKey = GenerateCacheKey(address);
+        var cachedLocation = await _cacheService.GetAsync<Location>(cacheKey).ConfigureAwait(false);
+        if (cachedLocation != null)
+        {
+            return cachedLocation;
+        }
         
         try
         {
@@ -58,12 +71,20 @@ public class GeolocationService : IGeolocationService
                 location.Lat,
                 location.Lng);
             
+            // Almacenar en caché el resultado
+            await _cacheService.SetAsync(cacheKey, result, TimeSpan.FromHours(24)).ConfigureAwait(false);
+            
             return result;
         }
         catch (Exception ex) when (ex is not HttpRequestException && ex is not InvalidOperationException)
         {
             throw new Exception($"Error al obtener coordenadas para {address}: {ex.Message}", ex);
         }
+    }
+    
+    private static string GenerateCacheKey(string address)
+    {
+        return $"{CacheKeyPrefix}:{address}";
     }
 
     public void Dispose()

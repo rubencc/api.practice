@@ -6,6 +6,7 @@ using Api.Weather.Host.ExceptionHandlers;
 using Api.Weather.Host.Configuration;
 using Asp.Versioning.ApiExplorer;
 using FluentValidation;
+using Weather.Infrastructure.Cache.Configuration;
 using Weather.Infrastructure.Opentelemetry.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,9 @@ builder.Services.AddSwaggerConfiguration();
 
 //FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+//Redis
+builder.Services.AddRedisCaching(builder.Configuration);
 
 builder.Services
     .AddApplicationDependencies()

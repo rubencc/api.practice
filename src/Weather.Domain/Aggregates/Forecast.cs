@@ -11,6 +11,7 @@ public class Forecast
         Description = description;
         Time = time;
         Id = Guid.NewGuid();
+        CreatedAt = DateTimeOffset.UtcNow;
     }
     
     public Guid Id { get; init; }
@@ -18,6 +19,7 @@ public class Forecast
     public DateTimeOffset Time { get; init; }
     public Temperature Temperature { get; init; }
     public string Description { get; init; }
+    public DateTimeOffset CreatedAt { get; init; } 
     
     public static Forecast Create (Location location, DateTimeOffset time, Temperature temperature, string description)
     {
