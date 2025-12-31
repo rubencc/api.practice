@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Weather.Host.Resources;
@@ -50,6 +51,17 @@ public class WeatherController : ControllerBase
         
         if (locationInfo == null)
             throw new NotFoundException($"Location '{request.Location}' not found. Please verify the address.");
+        
+        var previousForecasts = await _forecastService.GetForecastAsync(locationInfo, request.Time, cancellationToken).ConfigureAwait(false);
+        
+        if(previousForecasts.Any())
+            return Ok(previousForecasts.Select(x => new ForecastResponse() 
+            { 
+                Location = x.Location.Address, 
+                Time = x.Time.ToString(CultureInfo.InvariantCulture), 
+                Temperature = x.Temperature.ToString(), 
+                Weather = x.WeatherDescription 
+            }).ToList());
         
         var forecast = await this._weatherQueryService.GetForecastAsync(locationInfo, cancellationToken).ConfigureAwait(false);
         await _forecastService.AddForecastAsync(request.Location, request.Time, forecast, cancellationToken).ConfigureAwait(false);

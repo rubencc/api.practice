@@ -29,7 +29,7 @@ public class ForecastRequestValidator : AbstractValidator<ForecastRequest>
             .WithMessage("Time must not be default value");
     }
     
-    private bool TimeMustNotBeDefault(DateTimeOffset time)
+    private bool TimeMustNotBeDefault(DateTime time)
     {
         return time != default;
     }
