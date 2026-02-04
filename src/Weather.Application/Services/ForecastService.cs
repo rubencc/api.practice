@@ -21,6 +21,7 @@ public class ForecastService
         return repository.AddForecastAsync(forecast, cancellationToken);
     }
 
+    //TODO: Add instrumentation for monitoring
     public async Task<List<ForecastDto>> GetForecastAsync(Location location, DateTime time, CancellationToken cancellationToken = default)
     {
         var list = await repository.GetForecastAsync(location, time, cancellationToken).ConfigureAwait(false);

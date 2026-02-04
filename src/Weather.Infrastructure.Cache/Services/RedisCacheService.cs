@@ -7,6 +7,7 @@ using Weather.Infrastructure.Cache.Configuration;
 
 namespace Weather.Infrastructure.Cache.Services;
 
+//TODO: Add instrumentation for monitoring
 public class RedisCacheService : ICacheService
 {
     private readonly IConnectionMultiplexer _redis;

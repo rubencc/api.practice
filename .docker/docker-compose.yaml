@@ -1,3 +1,4 @@
+name: api-practice-infrastructure
 services:
   mongodb:
     container_name: api_mongodb
@@ -132,6 +133,7 @@ services:
 volumes:
   mongodb_data:
   mongodb_config:
+  redis_data:
   tempo_data:
   otelcollector_log:
 

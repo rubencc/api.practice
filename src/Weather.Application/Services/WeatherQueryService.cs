@@ -17,6 +17,7 @@ public class WeatherQueryService : IWeatherQueryService
         _httpClient = httpClient;
     }
 
+    //TODO: Add instrumentation for monitoring
     public async Task<ForecastDto> GetForecastAsync(
         Location location, 
         CancellationToken cancellationToken = default)
