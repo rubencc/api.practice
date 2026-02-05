@@ -10,9 +10,9 @@ public class ForecastService
 {
     private readonly IForecastRepository repository;
 
-    public ForecastService(IForecastRepository repository)
+    public ForecastService(IForecastRepository repo)
     {
-        repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        repository = repo ?? throw new ArgumentNullException(nameof(repository));
     }
 
     public Task<bool> AddForecastAsync(string location, DateTime time, ForecastDto dto, CancellationToken cancellationToken = default)
