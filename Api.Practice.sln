@@ -1,0 +1,144 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{60439F31-B69D-43D3-9556-4C223B625CD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AE329FA3-5CA3-403C-91AD-745E8B5D5D94}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docker", ".docker", "{FF785FF6-2D9D-4530-8766-8EE887B1FDC9}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\docker-compose.yaml = .docker\docker-compose.yaml
+		.docker\.env = .docker\.env
+		.docker\restart-monitoring.sh = .docker\restart-monitoring.sh
+		.docker\fix-monitoring.sh = .docker\fix-monitoring.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".misc", ".misc", "{3973FFC0-5A20-49FB-BE0E-9E89F466367F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Weather.Host", "src\Api.Weather.Host\Api.Weather.Host.csproj", "{7280E616-7487-4954-811B-3C0491D13AE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Weather.Host.UnitTest", "tests\Api.Weather.Host.UnitTest\Api.Weather.Host.UnitTest.csproj", "{B27F6680-4527-48B6-B011-2EE7456D79BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".documentation", ".documentation", "{22669C97-473E-4FE1-85D8-DC399F2808E6}"
+	ProjectSection(SolutionItems) = preProject
+		.documentation\OPENCAGE_API_SETUP.md = .documentation\OPENCAGE_API_SETUP.md
+		.documentation\OPEN_METEO_SERVICE.md = .documentation\OPEN_METEO_SERVICE.md
+		.documentation\INDEX.md = .documentation\INDEX.md
+		.documentation\README.md = .documentation\README.md
+		.documentation\PROBLEMDETAILS_IMPLEMENTATION.md = .documentation\PROBLEMDETAILS_IMPLEMENTATION.md
+		.documentation\API_VERSIONING.md = .documentation\API_VERSIONING.md
+		.documentation\DDD_ANALYSIS.md = .documentation\DDD_ANALYSIS.md
+		.documentation\OPENTELEMETRY_CONFIGURATION.md = .documentation\OPENTELEMETRY_CONFIGURATION.md
+		.documentation\OPENTELEMETRY_QUICKSTART.md = .documentation\OPENTELEMETRY_QUICKSTART.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Services", "1 - Services", "{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{2FC7A0F0-0094-49F4-81A0-A013D542F5F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Applicatiion", "3 - Applicatiion", "{B585D5D8-3B9A-418F-A872-38D075C49311}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infrastructure", "4 - Infrastructure", "{9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Domain", "src\Weather.Domain\Weather.Domain.csproj", "{1885E126-DCC5-4B98-9842-601EC088A1DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Application", "src\Weather.Application\Weather.Application.csproj", "{6C180C02-3F0A-4C46-BE01-CA509925C4FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Infrastructure", "src\Weather.Infrastructure\Weather.Infrastructure.csproj", "{959B7748-72AA-4383-9169-AF8F3C89CDFB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{EC002E7D-A79D-4431-A732-957F5D016A27}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "monitoring", "monitoring", "{90499172-C6FF-4062-9408-DA6274BEAA39}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "grafana", "grafana", "{BB0B0746-E4A6-4827-84C1-3A884865C547}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\monitoring\grafana\grafana.ini = .docker\monitoring\grafana\grafana.ini
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "provisioning", "provisioning", "{F08696F6-5A04-404B-B89B-3DAF6C5A15A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "datasources", "datasources", "{4C713DFA-2DFC-42CC-A1F4-479FE1D38C2E}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\monitoring\grafana\provisioning\datasources\datasources.yml = .docker\monitoring\grafana\provisioning\datasources\datasources.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "loki", "loki", "{9965AF96-0016-4A69-B8FA-2F1A7ABD915A}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\monitoring\loki\loki.yaml = .docker\monitoring\loki\loki.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "otel-collector", "otel-collector", "{55D63778-C534-49B0-9DCB-84256D64B8EE}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\monitoring\otel-collector\otel-collector-config.yaml = .docker\monitoring\otel-collector\otel-collector-config.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "prometheus", "prometheus", "{321CD0A6-FFC6-40D8-AC91-913051C46977}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\monitoring\prometheus\prometheus.yaml = .docker\monitoring\prometheus\prometheus.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tempo", "tempo", "{4D42929D-9FA2-4035-B21A-80FE59593AEB}"
+	ProjectSection(SolutionItems) = preProject
+		.docker\monitoring\tempo\tempo.yaml = .docker\monitoring\tempo\tempo.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Infrastructure.Opentelemetry", "src\Weather.Infrastructure.Opentelemetry\Weather.Infrastructure.Opentelemetry.csproj", "{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Infrastructure.Cache", "src\Weather.Infrastructure.Cache\Weather.Infrastructure.Cache.csproj", "{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7280E616-7487-4954-811B-3C0491D13AE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B27F6680-4527-48B6-B011-2EE7456D79BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1885E126-DCC5-4B98-9842-601EC088A1DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1885E126-DCC5-4B98-9842-601EC088A1DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1885E126-DCC5-4B98-9842-601EC088A1DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1885E126-DCC5-4B98-9842-601EC088A1DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C180C02-3F0A-4C46-BE01-CA509925C4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C180C02-3F0A-4C46-BE01-CA509925C4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C180C02-3F0A-4C46-BE01-CA509925C4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C180C02-3F0A-4C46-BE01-CA509925C4FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{959B7748-72AA-4383-9169-AF8F3C89CDFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{959B7748-72AA-4383-9169-AF8F3C89CDFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{959B7748-72AA-4383-9169-AF8F3C89CDFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{959B7748-72AA-4383-9169-AF8F3C89CDFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B27F6680-4527-48B6-B011-2EE7456D79BE} = {AE329FA3-5CA3-403C-91AD-745E8B5D5D94}
+		{5372AB4C-36D5-4B8E-AF8D-FA742B5E815C} = {60439F31-B69D-43D3-9556-4C223B625CD0}
+		{2FC7A0F0-0094-49F4-81A0-A013D542F5F9} = {60439F31-B69D-43D3-9556-4C223B625CD0}
+		{B585D5D8-3B9A-418F-A872-38D075C49311} = {60439F31-B69D-43D3-9556-4C223B625CD0}
+		{9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847} = {60439F31-B69D-43D3-9556-4C223B625CD0}
+		{7280E616-7487-4954-811B-3C0491D13AE0} = {5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}
+		{1885E126-DCC5-4B98-9842-601EC088A1DC} = {2FC7A0F0-0094-49F4-81A0-A013D542F5F9}
+		{6C180C02-3F0A-4C46-BE01-CA509925C4FC} = {B585D5D8-3B9A-418F-A872-38D075C49311}
+		{959B7748-72AA-4383-9169-AF8F3C89CDFB} = {9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847}
+		{90499172-C6FF-4062-9408-DA6274BEAA39} = {FF785FF6-2D9D-4530-8766-8EE887B1FDC9}
+		{BB0B0746-E4A6-4827-84C1-3A884865C547} = {90499172-C6FF-4062-9408-DA6274BEAA39}
+		{F08696F6-5A04-404B-B89B-3DAF6C5A15A2} = {BB0B0746-E4A6-4827-84C1-3A884865C547}
+		{4C713DFA-2DFC-42CC-A1F4-479FE1D38C2E} = {F08696F6-5A04-404B-B89B-3DAF6C5A15A2}
+		{9965AF96-0016-4A69-B8FA-2F1A7ABD915A} = {90499172-C6FF-4062-9408-DA6274BEAA39}
+		{55D63778-C534-49B0-9DCB-84256D64B8EE} = {90499172-C6FF-4062-9408-DA6274BEAA39}
+		{321CD0A6-FFC6-40D8-AC91-913051C46977} = {90499172-C6FF-4062-9408-DA6274BEAA39}
+		{4D42929D-9FA2-4035-B21A-80FE59593AEB} = {90499172-C6FF-4062-9408-DA6274BEAA39}
+		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2} = {9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847}
+		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178} = {9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847}
+	EndGlobalSection
+EndGlobal
