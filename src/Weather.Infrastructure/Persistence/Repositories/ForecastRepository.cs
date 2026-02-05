@@ -41,6 +41,17 @@ public class ForecastRepository : IForecastRepository
         return _forecastCollection.Find(filter).ToListAsync(cancellationToken);
     }
 
+    public async Task<Forecast> GetRecord(string address, CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Forecast>.Filter.Empty;
+        var result = await _forecastCollection.FindAsync(filter, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        var list = await result.ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        return list.First(x => x.Location.Address.ToLowerInvariant().Contains(address.ToLowerInvariant(), StringComparison.InvariantCultureIgnoreCase));
+    }
+
     public void Dispose()
     {
         // MongoDB client handles connection pooling internally

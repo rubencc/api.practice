@@ -8,8 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docker", ".docker", "{FF78
 	ProjectSection(SolutionItems) = preProject
 		.docker\docker-compose.yaml = .docker\docker-compose.yaml
 		.docker\.env = .docker\.env
-		.docker\restart-monitoring.sh = .docker\restart-monitoring.sh
-		.docker\fix-monitoring.sh = .docker\fix-monitoring.sh
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".misc", ".misc", "{3973FFC0-5A20-49FB-BE0E-9E89F466367F}"
@@ -85,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Infrastructure.Open
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Weather.Infrastructure.Cache", "src\Weather.Infrastructure.Cache\Weather.Infrastructure.Cache.csproj", "{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Weather.Consumer.Host", "src\Api.Weather.Consumer.Host\Api.Weather.Consumer.Host.csproj", "{CC3FB645-5D5F-4264-8E19-D4EF73617869}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +119,10 @@ Global
 		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC3FB645-5D5F-4264-8E19-D4EF73617869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC3FB645-5D5F-4264-8E19-D4EF73617869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC3FB645-5D5F-4264-8E19-D4EF73617869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC3FB645-5D5F-4264-8E19-D4EF73617869}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B27F6680-4527-48B6-B011-2EE7456D79BE} = {AE329FA3-5CA3-403C-91AD-745E8B5D5D94}
@@ -140,5 +144,6 @@ Global
 		{4D42929D-9FA2-4035-B21A-80FE59593AEB} = {90499172-C6FF-4062-9408-DA6274BEAA39}
 		{EA8E7B9A-657C-4A7D-8104-C3BFB8C198E2} = {9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847}
 		{219F7A7F-5BC6-4154-8E9E-3F3A735C1178} = {9B8A63D9-0AAC-414A-8AEB-F94FEE2E6847}
+		{CC3FB645-5D5F-4264-8E19-D4EF73617869} = {5372AB4C-36D5-4B8E-AF8D-FA742B5E815C}
 	EndGlobalSection
 EndGlobal

@@ -40,4 +40,11 @@ public class MemoryForecastRepository : IForecastRepository
         
         return Task.FromResult(new List<Forecast>());
     }
+
+    public Task<Forecast> GetRecord(string address, CancellationToken cancellationToken = default)
+    {
+        var find = _forecasts.First(x =>
+            x.Value.Location.Address.Contains(address, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(find.Value);
+    }
 }

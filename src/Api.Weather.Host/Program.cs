@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Weather.Application.Configuration;
 using Api.Weather.Host.ExceptionHandlers;
 using Api.Weather.Host.Configuration;
+using Api.Weather.Host.Extensions;
 using Asp.Versioning.ApiExplorer;
 using FluentValidation;
 using Weather.Infrastructure.Cache.Configuration;
@@ -30,7 +31,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddSwaggerConfiguration();
 
 //FluentValidation
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+//builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 //Redis
 builder.Services.AddRedisCaching(builder.Configuration);
@@ -38,6 +39,8 @@ builder.Services.AddRedisCaching(builder.Configuration);
 builder.Services
     .AddApplicationDependencies()
     .AddInfrastructureDependencies(builder.Configuration);
+
+builder.Services.AddMassTransit(builder.Configuration);
 
 var app = builder.Build();
 

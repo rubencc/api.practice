@@ -28,8 +28,6 @@ services:
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
-    environment:
-      MONGO_INITDB_DATABASE: COR_WriteDb
     ports:
       - ${MONGO_PORT:?err}:${MONGO_PORT:?err}
     networks:
@@ -41,11 +39,27 @@ services:
     profiles: ["api-infrastructure"]
     restart: on-failure
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      - ALLOW_EMPTY_PASSWORD=none
     volumes:
       - redis_data:/data
     ports:
-      - 6379:6379
+      - 6378:6378
+    networks:
+      - localnet
+  
+  rabbitmq:
+    container_name: api-rabbitmq
+    image: rabbitmq:${RABBITMQ_VERSION:?err}-management
+    profiles: ["api-infrastructure"]
+    restart: on-failure
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - 5672:5672   # AMQP protocol
+      - 15672:15672 # Management UI
     networks:
       - localnet
   
@@ -134,6 +148,7 @@ volumes:
   mongodb_data:
   mongodb_config:
   redis_data:
+  rabbitmq_data:
   tempo_data:
   otelcollector_log:
 

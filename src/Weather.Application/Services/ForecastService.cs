@@ -33,4 +33,16 @@ public class ForecastService
             WeatherDescription = f.Description,
         }).ToList();
     }
+    
+    public async Task<ForecastDto> GetRecord(string address, CancellationToken cancellationToken = default)
+    {
+        var record = await repository.GetRecord(address, cancellationToken).ConfigureAwait(false);
+        return new ForecastDto
+        {
+            Location = record.Location,
+            Time = record.Time,
+            Temperature = record.Temperature,
+            WeatherDescription = record.Description,
+        };
+    }
 }

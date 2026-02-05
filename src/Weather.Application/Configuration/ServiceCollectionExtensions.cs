@@ -15,6 +15,8 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<ForecastService>();
         
+        services.AddTransient<ISendMessageService, SendMessageService>();
+        
         return services;
     }
 }
