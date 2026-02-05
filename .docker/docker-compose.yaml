@@ -1,0 +1,159 @@
+name: api-practice-infrastructure
+services:
+  mongodb:
+    container_name: api_mongodb
+    image: mongo:${MONGO_VERSION:?err}
+    profiles: ["api-infrastructure"]
+    command: >
+      bash -c "
+        mongod --replSet rs-local --bind_ip_all --port 27017 --fork --logpath /var/log/mongodb.log &&
+        until mongosh --eval 'print(\"MongoDB está listo\")' > /dev/null 2>&1; do sleep 2; done &&
+        mongosh --eval '
+          try {
+            rs.status();
+            print(\"Replica set ya inicializado\");
+          } catch (e) {
+            rs.initiate({
+              _id: \"rs-local\",
+              members: [
+                { _id: 0, host: \"mongodb:27017\" }
+              ]
+            });
+            print(\"Replica set rs-local inicializado\");
+          }
+        ' &&
+        tail -f /var/log/mongodb.log
+      "
+    restart: on-failure
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    ports:
+      - ${MONGO_PORT:?err}:${MONGO_PORT:?err}
+    networks:
+      - localnet
+  
+  redis:
+    container_name: api-redis
+    image: redis:${REDIS_VERSION:?err}
+    profiles: ["api-infrastructure"]
+    restart: on-failure
+    environment:
+      - ALLOW_EMPTY_PASSWORD=none
+    volumes:
+      - redis_data:/data
+    ports:
+      - 6378:6378
+    networks:
+      - localnet
+  
+  rabbitmq:
+    container_name: api-rabbitmq
+    image: rabbitmq:${RABBITMQ_VERSION:?err}-management
+    profiles: ["api-infrastructure"]
+    restart: on-failure
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - 5672:5672   # AMQP protocol
+      - 15672:15672 # Management UI
+    networks:
+      - localnet
+  
+  otel-collector:
+    container_name: api_otel-collector
+    image: otel/opentelemetry-collector-contrib:${OTELCOLLECTOR_VERSION}
+    profiles: [ "api-infrastructure-monitoring" ]
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    restart: on-failure
+    volumes:
+      - ./monitoring/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - otelcollector_log:/etc/output:rw # Store the logs
+    ports:
+      - "8890:8890"   # Prometheus metrics exposed by the collector
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiverz
+      - "1333:1333"   # HealtCheck
+    networks:
+      - localnet
+
+  prometheus:
+    container_name: api_prometheus
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    profiles: [ "api-infrastructure-monitoring" ]
+    restart: on-failure
+    volumes:
+      - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9091:9090"
+    networks:
+      - localnet
+
+  tempo:
+    container_name: api_tempo
+    image: grafana/tempo:${TEMPO_VERSION}
+    profiles: [ "api-infrastructure-monitoring" ]
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    restart: on-failure
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./monitoring/tempo/tempo.yaml:/etc/tempo.yaml
+    tmpfs:
+      - /tmp/tempo:mode=1777
+    ports:
+      - 3200:3200  # tempo
+      - 9095:9095  # tempo grpc
+      - 4317       # otlp grpc (no expuesto externamente para evitar conflicto con otel-collector)
+      - 4318       # otlp http (no expuesto externamente para evitar conflicto con otel-collector)
+    networks:
+      - localnet
+
+  loki:
+    container_name: api_loki
+    image: grafana/loki:${LOKI_VERSION}
+    profiles: [ "api-infrastructure-monitoring" ]
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: on-failure
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./monitoring/loki/loki.yaml:/etc/loki/local-config.yaml
+    ports:
+      - 3100:3100
+    networks:
+      - localnet
+
+  grafana:
+    container_name: api_grafana
+    image: grafana/grafana:${GRAFANA_VERSION}
+    profiles: [ "api-infrastructure-monitoring" ]
+    restart: on-failure
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - K6_INFLUXDB_GRAFANA_TOKEN=my-super-secret-auth-token
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./monitoring/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - 3000:3000
+    networks:
+      - localnet
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+  redis_data:
+  rabbitmq_data:
+  tempo_data:
+  otelcollector_log:
+
+networks:
+  localnet:
+    driver: bridge
+  infrastructure_localnet:
+    external: true
