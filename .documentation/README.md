@@ -145,7 +145,7 @@ public class Forecast
 **Dependencias**:
 - Weather.Domain (referencia de proyecto)
 - Microsoft.Extensions.Http (8.0.0)
-- Microsoft.Extensions.DependencyInjection.Abstractions (10.0.1)
+- Microsoft.Extensions.DependencyInjection.Abstractions (10.0.2)
 
 ---
 
@@ -187,8 +187,8 @@ public ForecastRepository(
 - Weather.Domain (referencia de proyecto)
 - Weather.Application (referencia de proyecto)
 - MongoDB.Driver (3.5.2)
-- Microsoft.Extensions.Configuration.Abstractions (10.0.1)
-- Microsoft.Extensions.Configuration.Binder (10.0.1)
+- Microsoft.Extensions.Configuration.Abstractions (10.0.2)
+- Microsoft.Extensions.Configuration.Binder (10.0.2)
 - Microsoft.Extensions.Options.ConfigurationExtensions (10.0.0)
 
 ---

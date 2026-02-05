@@ -14,12 +14,12 @@ Este proyecto está configurado con **OpenTelemetry** para observabilidad comple
 El proyecto `Wheather.Infrastructure.Opentelemetry` incluye:
 
 ```xml
-<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
-<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
-<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
-<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
+<PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.15.0" />
+<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.15.0" />
+<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.15.0" />
+<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.0" />
+<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.0" />
+<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.0" />
 ```
 
 ### 2. Configuración en appsettings.json

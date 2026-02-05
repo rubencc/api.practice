@@ -100,6 +100,7 @@ public static class ServiceCollectionExtensions
                     tracerProviderBuilder.AddOtlpExporter(otlpOptions =>
                     {
                         otlpOptions.Endpoint = new Uri(options.OtlpEndpoint);
+                        otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                     });
                 }
             })
@@ -121,25 +122,17 @@ public static class ServiceCollectionExtensions
                     meterProviderBuilder.AddHttpClientInstrumentation();
                 }
 
-                // Métricas de runtime .NET
-                if (options.EnableRuntimeInstrumentation)
-                {
-                    meterProviderBuilder.AddRuntimeInstrumentation();
-                }
-
                 if (options.EnableOtlpExporter)
                 {
                     meterProviderBuilder.AddOtlpExporter(otlpOptions =>
                     {
                         otlpOptions.Endpoint = new Uri(options.OtlpEndpoint);
-                        otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
+                        otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                     });
                 }
             });
 
-        // Registrar ActivitySource para crear spans personalizados
-        services.AddSingleton(new ActivitySource(options.ServiceName, options.ServiceVersion));
-
+        
         return services;
     }
 }
