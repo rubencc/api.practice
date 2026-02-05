@@ -12,7 +12,7 @@ public class ForecastService
 
     public ForecastService(IForecastRepository repository)
     {
-        this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
     public Task<bool> AddForecastAsync(string location, DateTime time, ForecastDto dto, CancellationToken cancellationToken = default)

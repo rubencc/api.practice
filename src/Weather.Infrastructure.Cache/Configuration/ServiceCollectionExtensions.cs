@@ -11,26 +11,36 @@ public static class ServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Configurar RedisSettings con Options Pattern
-        services.Configure<RedisSettings>(
-            configuration.GetSection(RedisSettings.SectionName));
-
-        var redisSettings = configuration
-            .GetSection(RedisSettings.SectionName)
-            .Get<RedisSettings>();
-
-        if (redisSettings?.Enabled != true) return services;
-
-        var configurationOptions = ConfigurationOptions.Parse(redisSettings.ConnectionString);
-        configurationOptions.ConnectTimeout = redisSettings.ConnectTimeout;
-        configurationOptions.SyncTimeout = redisSettings.SyncTimeout;
-        configurationOptions.AbortOnConnectFail = redisSettings.AbortOnConnectFail;
-        // configurationOptions.ConnectRetry = true;
-        // configurationOptions.AllowAdmin = redisSettings.AllowAdmin;
         
-        services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(configurationOptions));
+        var useRedis = configuration.GetValue<bool>("Redis:Enabled");
         
-        services.AddSingleton<ICacheService, RedisCacheService>();
+        if (useRedis)
+        {
+            // Configurar RedisSettings con Options Pattern
+            services.Configure<RedisSettings>(
+                configuration.GetSection(RedisSettings.SectionName));
+
+            var redisSettings = configuration
+                .GetSection(RedisSettings.SectionName)
+                .Get<RedisSettings>();
+
+            if (redisSettings?.Enabled != true) return services;
+
+            var configurationOptions = ConfigurationOptions.Parse(redisSettings.ConnectionString);
+            configurationOptions.ConnectTimeout = redisSettings.ConnectTimeout;
+            configurationOptions.SyncTimeout = redisSettings.SyncTimeout;
+            configurationOptions.AbortOnConnectFail = redisSettings.AbortOnConnectFail;
+            // configurationOptions.ConnectRetry = true;
+            // configurationOptions.AllowAdmin = redisSettings.AllowAdmin;
+
+            services.AddSingleton<IConnectionMultiplexer>(sp => ConnectionMultiplexer.Connect(configurationOptions));
+
+            services.AddSingleton<ICacheService, RedisCacheService>();
+        }
+        else
+        {
+            services.AddSingleton<ICacheService, MemoryCacheService>();
+        }
 
         return services;
     }

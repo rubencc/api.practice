@@ -39,7 +39,7 @@ public class RedisCacheService : ICacheService
     {
         try
         {
-            bool exists = await this.ExistsAsync(key).ConfigureAwait(false);
+            bool exists = await ExistsAsync(key).ConfigureAwait(false);
 
             if (!exists)
             {

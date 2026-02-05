@@ -28,10 +28,10 @@ public class WeatherController : ControllerBase
 
     public WeatherController(IValidator<ForecastRequest> validator, IGeolocationService geolocationService, IWeatherQueryService weatherQueryService, ForecastService forecastService)
     {
-        this._validator = validator ?? throw new ArgumentNullException(nameof(validator));
-        this._geolocationService = geolocationService ?? throw new ArgumentNullException(nameof(geolocationService));
-        this._weatherQueryService = weatherQueryService ?? throw new ArgumentNullException(nameof(weatherQueryService));
-        this._forecastService = forecastService ?? throw new ArgumentNullException(nameof(forecastService));
+        _validator = validator ?? throw new ArgumentNullException(nameof(validator));
+        _geolocationService = geolocationService ?? throw new ArgumentNullException(nameof(geolocationService));
+        _weatherQueryService = weatherQueryService ?? throw new ArgumentNullException(nameof(weatherQueryService));
+        _forecastService = forecastService ?? throw new ArgumentNullException(nameof(forecastService));
     }
 
     [HttpPost]
@@ -47,7 +47,7 @@ public class WeatherController : ControllerBase
         if(!validationResult.IsValid)
             throw new ValidationException("Invalid forecast request. Please check location and time fields.", validationResult.Errors);
 
-        Location locationInfo = await this._geolocationService.GetCoordinates(request.Location).ConfigureAwait(false);
+        Location locationInfo = await _geolocationService.GetCoordinates(request.Location).ConfigureAwait(false);
         
         if (locationInfo == null)
             throw new NotFoundException($"Location '{request.Location}' not found. Please verify the address.");
@@ -63,7 +63,7 @@ public class WeatherController : ControllerBase
                 Weather = x.WeatherDescription 
             }).ToList());
         
-        var forecast = await this._weatherQueryService.GetForecastAsync(locationInfo, cancellationToken).ConfigureAwait(false);
+        var forecast = await _weatherQueryService.GetForecastAsync(locationInfo, cancellationToken).ConfigureAwait(false);
         await _forecastService.AddForecastAsync(request.Location, request.Time, forecast, cancellationToken).ConfigureAwait(false);
         
         var response = new ForecastResponse() 
