@@ -6,6 +6,7 @@ using OpenTelemetry.Trace;
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Logs;
 
 namespace Weather.Infrastructure.Opentelemetry.Configuration;
 
@@ -130,8 +131,26 @@ public static class ServiceCollectionExtensions
                         otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                     });
                 }
-            });
+            })
+            .WithLogging(loggingProviderBuilder =>
+            {
 
+                loggingProviderBuilder.SetResourceBuilder(resourceBuilder);
+                
+                if (options.EnableOtlpExporter)
+                {
+                    loggingProviderBuilder.AddOtlpExporter(otlpOptions =>
+                    {
+                        otlpOptions.Endpoint = new Uri(options.OtlpEndpoint);
+                        otlpOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                    });
+                }
+
+                if (options.EnableConsoleExporter)
+                {
+                    loggingProviderBuilder.AddConsoleExporter();
+                }
+            });
         
         return services;
     }
