@@ -50,7 +50,7 @@ public class RedisCacheService : ICacheService
             var cachedValue = await _cache.StringGetAsync(key).ConfigureAwait(false);
             
             _logger.LogDebug("Cache hit for key: {Key}", key);
-            return JsonSerializer.Deserialize<T>(cachedValue, _jsonOptions);
+            return JsonSerializer.Deserialize<T>(cachedValue.ToString(), _jsonOptions);
         }
         catch (Exception ex)
         {
